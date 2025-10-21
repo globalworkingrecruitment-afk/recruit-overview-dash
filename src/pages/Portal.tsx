@@ -112,16 +112,25 @@ const Portal = () => {
       filtered = candidates.filter((c) => c.estado === statusFilter);
     }
 
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
+    if (searchQuery.trim()) {
+      const queryWords = searchQuery
+        .toLowerCase()
+        .split(/\s+/)
+        .filter(Boolean);
+
       filtered = filtered.filter((c) => {
         const searchableFields = [
           c.nombre,
           language === 'en' ? c.nacionalidad_en : c.nacionalidad_no,
           language === 'en' ? c.profesion_en : c.profesion_no,
+          language === 'en' ? c.carta_resumen_en : c.carta_resumen_no,
+          language === 'en' ? c.experiencia_medica_en : c.experiencia_medica_no,
+          language === 'en' ? c.experiencia_no_medica_en : c.experiencia_no_medica_no,
+          language === 'en' ? c.formacion_en : c.formacion_no,
         ];
-        return searchableFields.some((field) => 
-          field?.toLowerCase().includes(query)
+
+        return queryWords.every((word) =>
+          searchableFields.some((field) => field?.toLowerCase().includes(word))
         );
       });
     }
@@ -167,18 +176,30 @@ const Portal = () => {
       {/* Fixed Header */}
       <div className="sticky top-0 z-50 bg-gradient-to-r from-primary via-orange-500 to-primary shadow-lg">
         <div className="container mx-auto px-6 py-4">
-          <div className="flex justify-between items-center">
+          <div className="flex items-center justify-between">
+            {/* Logout Button */}
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={handleLogout}
+              className="bg-white hover:bg-white/90 text-primary shadow-sm"
+            >
+              <LogOut className="h-4 w-4 mr-2" />
+              {t('logout')}
+            </Button>
+
             {/* Logo */}
-            <img 
-              src={logoGlobalWorking} 
-              alt="Global Working" 
-              className="h-12 object-contain"
-            />
-            
-            {/* Right side controls */}
-            <div className="flex items-center gap-4">
-              {/* Language Switch */}
-              <div className="relative flex items-center bg-white/20 backdrop-blur-sm rounded-full p-1">
+            <div className="flex-1 flex justify-center">
+              <img
+                src={logoGlobalWorking}
+                alt="Global Working"
+                className="h-14 object-contain drop-shadow-md"
+              />
+            </div>
+
+            {/* Language Switch */}
+            <div className="flex items-center justify-end flex-1">
+              <div className="relative flex items-center bg-white/20 backdrop-blur-sm rounded-full p-1 shadow-inner">
                 <span className={`absolute left-1 top-1/2 -translate-y-1/2 w-12 h-8 bg-white rounded-full transition-transform duration-300 ${language === 'no' ? 'translate-x-12' : 'translate-x-0'}`} />
                 <button
                   onClick={() => setLanguage('en')}
@@ -193,17 +214,6 @@ const Portal = () => {
                   NO
                 </button>
               </div>
-              
-              {/* Logout Button */}
-              <Button 
-                variant="secondary" 
-                size="sm" 
-                onClick={handleLogout}
-                className="bg-white hover:bg-white/90 text-primary"
-              >
-                <LogOut className="h-4 w-4 mr-2" />
-                {t('logout')}
-              </Button>
             </div>
           </div>
         </div>
