@@ -32,6 +32,14 @@ const CandidateCard = ({ candidate, onExpand }: CandidateCardProps) => {
       .slice(0, 3);
   };
 
+  const getDisplayName = (name: string) => {
+    const parts = name.split(' ');
+    if (parts.length > 1) {
+      return `${parts[0]} ${parts[parts.length - 1][0]}.`;
+    }
+    return parts[0];
+  };
+
   const age = new Date().getFullYear() - candidate.anio_nacimiento;
   const nationality = language === 'en' ? candidate.nacionalidad_en : candidate.nacionalidad_no;
   const profession = language === 'en' ? candidate.profesion_en : candidate.profesion_no;
@@ -42,12 +50,12 @@ const CandidateCard = ({ candidate, onExpand }: CandidateCardProps) => {
     <Card className="hover:shadow-lg transition-all duration-300 bg-gradient-card">
       <CardHeader className="flex flex-row items-start justify-between pb-2">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-full bg-gradient-primary flex items-center justify-center text-white font-bold text-lg">
+          <div className="w-14 h-14 rounded-full bg-gradient-primary flex items-center justify-center text-white font-bold text-xl shadow-lg">
             {getInitials(candidate.nombre)}
           </div>
           <div>
-            <p className="text-xs text-muted-foreground">{t('yearsOld')}</p>
-            <p className="font-semibold">{age}</p>
+            <p className="text-lg font-bold">{getDisplayName(candidate.nombre)}</p>
+            <p className="text-sm text-muted-foreground">{age} {t('years')}</p>
           </div>
         </div>
         <Button
