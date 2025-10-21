@@ -14,8 +14,8 @@ import UserDetailsDialog from '@/components/admin/UserDetailsDialog';
 
 interface UserStats {
   username: string;
-  email: string | null;
-  full_name: string | null;
+  email: string;
+  fullName: string;
   candidatesViewed: number;
   searches: number;
   interviews: number;
@@ -26,10 +26,12 @@ const AdminDashboard = () => {
   const { language, setLanguage, t } = useLanguage();
   const navigate = useNavigate();
   
-  const [newUsername, setNewUsername] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [newFullName, setNewFullName] = useState('');
-  const [newEmail, setNewEmail] = useState('');
+  const [newUser, setNewUser] = useState({
+    username: '',
+    password: '',
+    fullName: '',
+    email: ''
+  });
   const [userStats, setUserStats] = useState<UserStats[]>([]);
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -44,71 +46,95 @@ const AdminDashboard = () => {
 
   const fetchUserStats = async () => {
     try {
-      // Fetch all users
-      const { data: users, error: usersError } = await supabase.rpc('admin_list_app_users');
-      if (usersError) throw usersError;
+      setLoading(true);
+      
+      // Fetch all profiles
+      const { data: profiles, error: profilesError } = await supabase
+        .from('profiles')
+        .select('*');
+      
+      if (profilesError) throw profilesError;
 
-      // Fetch candidate views
-      const { data: views, error: viewsError } = await supabase.rpc('admin_list_candidate_view_logs');
-      if (viewsError) throw viewsError;
+      // Fetch candidate view logs
+      const { data: viewLogs, error: viewError } = await supabase
+        .from('candidate_view_logs')
+        .select('*');
+      
+      if (viewError) throw viewError;
 
-      // Fetch searches
-      const { data: searches, error: searchesError } = await supabase.rpc('admin_list_employer_search_logs');
-      if (searchesError) throw searchesError;
+      // Fetch search logs
+      const { data: searchLogs, error: searchError } = await supabase
+        .from('employer_search_logs')
+        .select('*');
+      
+      if (searchError) throw searchError;
 
-      // Fetch interviews
-      const { data: interviews, error: interviewsError } = await supabase.rpc('admin_list_schedule_requests');
-      if (interviewsError) throw interviewsError;
+      // Fetch interview schedules
+      const { data: interviews, error: interviewError } = await supabase
+        .from('schedule_requests')
+        .select('*');
+      
+      if (interviewError) throw interviewError;
 
       // Combine stats
-      const stats: UserStats[] = users
-        .filter((u: any) => u.username !== 'admin')
-        .map((u: any) => ({
-          username: u.username,
-          email: u.email,
-          full_name: u.full_name,
-          candidatesViewed: views?.filter((v: any) => v.employer_username === u.username).length || 0,
-          searches: searches?.filter((s: any) => s.employer_username === u.username).length || 0,
-          interviews: interviews?.filter((i: any) => i.employer_username === u.username).length || 0,
-        }));
+      const stats: UserStats[] = (profiles || []).map((profile: any) => ({
+        username: profile.username,
+        email: '',
+        fullName: profile.full_name || '',
+        candidatesViewed: (viewLogs || []).filter((log: any) => log.employer_username === profile.username).length,
+        searches: (searchLogs || []).filter((log: any) => log.employer_username === profile.username).length,
+        interviews: (interviews || []).filter((log: any) => log.employer_username === profile.username).length,
+      }));
 
       setUserStats(stats);
     } catch (error) {
-      console.error('Error fetching stats:', error);
-      toast.error('Failed to load statistics');
-    }
-  };
-
-  const handleCreateUser = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
-      const { error } = await supabase.rpc('admin_create_app_user', {
-        p_username: newUsername,
-        p_password: newPassword,
-        p_full_name: newFullName || null,
-        p_email: newEmail || null,
-      });
-
-      if (error) throw error;
-
-      toast.success(t('userCreated'));
-      setNewUsername('');
-      setNewPassword('');
-      setNewFullName('');
-      setNewEmail('');
-      fetchUserStats();
-    } catch (error) {
-      console.error('Error creating user:', error);
-      toast.error('Failed to create user');
+      console.error('Error fetching user stats:', error);
+      toast.error(t('errorLoadingStats'));
     } finally {
       setLoading(false);
     }
   };
 
-  const handleLogout = () => {
-    logout();
+  const handleCreateUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!newUser.email || !newUser.password || !newUser.username) {
+      toast.error(t('fillAllFields'));
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      // Create auth user with Supabase Auth
+      const { error } = await supabase.auth.signUp({
+        email: newUser.email,
+        password: newUser.password,
+        options: {
+          data: {
+            username: newUser.username,
+            full_name: newUser.fullName || null,
+          }
+        }
+      });
+
+      if (error) throw error;
+
+      toast.success(t('userCreated'));
+      setNewUser({ username: '', password: '', fullName: '', email: '' });
+      
+      // Wait a bit for the trigger to complete
+      setTimeout(() => fetchUserStats(), 1000);
+    } catch (error: any) {
+      console.error('Error creating user:', error);
+      toast.error(error.message || t('errorCreatingUser'));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    await logout();
     navigate('/');
   };
 
@@ -150,8 +176,18 @@ const AdminDashboard = () => {
                 <Label htmlFor="username">{t('username')}</Label>
                 <Input
                   id="username"
-                  value={newUsername}
-                  onChange={(e) => setNewUsername(e.target.value)}
+                  value={newUser.username}
+                  onChange={(e) => setNewUser({ ...newUser, username: e.target.value })}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="email">{t('email')}</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={newUser.email}
+                  onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
                   required
                 />
               </div>
@@ -160,26 +196,18 @@ const AdminDashboard = () => {
                 <Input
                   id="password"
                   type="password"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
+                  value={newUser.password}
+                  onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
                   required
+                  minLength={6}
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="fullName">{t('fullName')}</Label>
                 <Input
                   id="fullName"
-                  value={newFullName}
-                  onChange={(e) => setNewFullName(e.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="email">{t('email')}</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={newEmail}
-                  onChange={(e) => setNewEmail(e.target.value)}
+                  value={newUser.fullName}
+                  onChange={(e) => setNewUser({ ...newUser, fullName: e.target.value })}
                 />
               </div>
               <div className="flex items-end">
@@ -218,7 +246,14 @@ const AdminDashboard = () => {
               {userStats.map((stat) => (
                 <UserStatsRow
                   key={stat.username}
-                  stats={stat}
+                  stats={{
+                    username: stat.username,
+                    email: stat.email,
+                    full_name: stat.fullName,
+                    candidatesViewed: stat.candidatesViewed,
+                    searches: stat.searches,
+                    interviews: stat.interviews,
+                  }}
                   onViewDetails={() => setSelectedUser(stat.username)}
                 />
               ))}

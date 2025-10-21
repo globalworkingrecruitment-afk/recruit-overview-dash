@@ -12,15 +12,19 @@ const translations = {
   en: {
     // Auth
     login: 'Login',
+    signup: 'Sign Up',
     username: 'Username',
     password: 'Password',
+    email: 'Email',
+    fullName: 'Full Name',
     logout: 'Logout',
+    fillAllFields: 'Please fill all required fields',
+    errorCreatingUser: 'Error creating user',
+    errorLoadingStats: 'Error loading statistics',
     
     // Admin
     adminPanel: 'Admin Panel',
     createUser: 'Create User',
-    fullName: 'Full Name',
-    email: 'Email',
     userStatistics: 'User Statistics',
     candidatesViewed: 'Candidates Viewed',
     searches: 'Searches',
@@ -63,15 +67,19 @@ const translations = {
   no: {
     // Auth
     login: 'Logg inn',
+    signup: 'Registrer deg',
     username: 'Brukernavn',
     password: 'Passord',
+    email: 'E-post',
+    fullName: 'Fullt navn',
     logout: 'Logg ut',
+    fillAllFields: 'Vennligst fyll ut alle obligatoriske felt',
+    errorCreatingUser: 'Feil ved oppretting av bruker',
+    errorLoadingStats: 'Feil ved lasting av statistikk',
     
     // Admin
     adminPanel: 'Administrasjonspanel',
     createUser: 'Opprett bruker',
-    fullName: 'Fullt navn',
-    email: 'E-post',
     userStatistics: 'Brukerstatistikk',
     candidatesViewed: 'Kandidater sett',
     searches: 'Søk',
