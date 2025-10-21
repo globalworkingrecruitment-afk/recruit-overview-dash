@@ -104,36 +104,32 @@ const AdminDashboard = () => {
   const handleCreateUser = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!newUser.email || !newUser.password || !newUser.username) {
-      toast.error(t('fillAllFields'));
+    if (!newUser.password || !newUser.username) {
+      toast.error('Por favor, complete username y password');
       return;
     }
 
     setLoading(true);
 
     try {
-      // Create auth user with Supabase Auth
-      const { error } = await supabase.auth.signUp({
-        email: newUser.email,
-        password: newUser.password,
-        options: {
-          data: {
-            username: newUser.username,
-            full_name: newUser.fullName || null,
-          }
-        }
+      // Create user with custom app_users system
+      const { data, error } = await supabase.rpc('admin_create_app_user', {
+        p_username: newUser.username,
+        p_password: newUser.password,
+        p_full_name: newUser.fullName || null,
+        p_email: newUser.email || null,
       });
 
       if (error) throw error;
 
-      toast.success(t('userCreated'));
+      toast.success('Usuario creado exitosamente');
       setNewUser({ username: '', password: '', fullName: '', email: '' });
       
-      // Wait a bit for the trigger to complete
-      setTimeout(() => fetchUserStats(), 1000);
+      // Refresh user stats
+      setTimeout(() => fetchUserStats(), 500);
     } catch (error: any) {
       console.error('Error creating user:', error);
-      toast.error(error.message || t('errorCreatingUser'));
+      toast.error(error.message || 'Error al crear usuario');
     } finally {
       setLoading(false);
     }
@@ -187,13 +183,12 @@ const AdminDashboard = () => {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="email">{t('email')}</Label>
+                <Label htmlFor="email">{t('email')} (opcional)</Label>
                 <Input
                   id="email"
                   type="email"
                   value={newUser.email}
                   onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
-                  required
                 />
               </div>
               <div className="space-y-2">
@@ -208,7 +203,7 @@ const AdminDashboard = () => {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="fullName">{t('fullName')}</Label>
+                <Label htmlFor="fullName">{t('fullName')} (opcional)</Label>
                 <Input
                   id="fullName"
                   value={newUser.fullName}
