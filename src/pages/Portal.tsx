@@ -129,9 +129,9 @@ const Portal = () => {
           language === 'en' ? c.formacion_en : c.formacion_no,
         ];
 
-        return queryWords.every((word) =>
-          searchableFields.some((field) => field?.toLowerCase().includes(word))
-        );
+        const searchText = searchableFields.join(' ').toLowerCase();
+
+        return queryWords.some((word) => searchText.includes(word));
       });
     }
 
