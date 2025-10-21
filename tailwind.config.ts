@@ -55,15 +55,22 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        gw: {
+          'blue-dark': "hsl(var(--gw-blue-dark))",
+          'blue-medium': "hsl(var(--gw-blue-medium))",
+          'orange': "hsl(var(--gw-orange))",
+        },
       },
       backgroundImage: {
         'gradient-primary': 'var(--gradient-primary)',
+        'gradient-accent': 'var(--gradient-accent)',
         'gradient-card': 'var(--gradient-card)',
       },
       boxShadow: {
         'sm': 'var(--shadow-sm)',
         'md': 'var(--shadow-md)',
         'lg': 'var(--shadow-lg)',
+        'elegant': 'var(--shadow-elegant)',
       },
       transitionProperty: {
         'smooth': 'var(--transition-smooth)',

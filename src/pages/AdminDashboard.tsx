@@ -11,6 +11,7 @@ import { toast } from 'sonner';
 import { LogOut, Languages, Users, Search, Calendar } from 'lucide-react';
 import UserStatsRow from '@/components/admin/UserStatsRow';
 import UserDetailsDialog from '@/components/admin/UserDetailsDialog';
+import logoGW from '@/assets/logo-globalworking.png';
 
 interface UserStats {
   username: string;
@@ -143,9 +144,16 @@ const AdminDashboard = () => {
       <div className="container mx-auto p-6 space-y-6">
         {/* Header */}
         <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-            {t('adminPanel')}
-          </h1>
+          <div className="flex items-center gap-4">
+            <img 
+              src={logoGW} 
+              alt="GlobalWorking" 
+              className="h-12 object-contain"
+            />
+            <h1 className="text-3xl font-bold text-primary">
+              {t('adminPanel')}
+            </h1>
+          </div>
           <div className="flex gap-2">
             <Button
               variant="outline"

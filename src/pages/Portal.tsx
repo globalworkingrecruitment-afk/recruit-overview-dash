@@ -9,6 +9,7 @@ import { LogOut, Languages, Search } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import CandidateCard from '@/components/portal/CandidateCard';
 import CandidateDetailsDialog from '@/components/portal/CandidateDetailsDialog';
+import logoRedGW from '@/assets/logo-redgw.png';
 
 interface Candidate {
   id: string;
@@ -127,9 +128,16 @@ const Portal = () => {
       <div className="container mx-auto p-6 space-y-6">
         {/* Header */}
         <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-            {t('candidatePortal')}
-          </h1>
+          <div className="flex items-center gap-4">
+            <img 
+              src={logoRedGW} 
+              alt="RedGW" 
+              className="h-12 object-contain"
+            />
+            <h1 className="text-3xl font-bold text-primary">
+              {t('candidatePortal')}
+            </h1>
+          </div>
           <div className="flex gap-2">
             <Button
               variant="outline"

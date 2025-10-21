@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Languages } from 'lucide-react';
+import logoGW from '@/assets/logo-globalworking.png';
 
 const Login = () => {
   const { login, user, isAdmin, loading } = useAuth();
@@ -52,8 +53,15 @@ const Login = () => {
       </div>
 
       <Card className="w-full max-w-md shadow-lg">
-        <CardHeader className="space-y-1 text-center">
-          <CardTitle className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+        <CardHeader className="space-y-4 text-center">
+          <div className="flex justify-center">
+            <img 
+              src={logoGW} 
+              alt="GlobalWorking" 
+              className="h-16 object-contain"
+            />
+          </div>
+          <CardTitle className="text-2xl font-bold text-primary">
             {t('candidatePortal')}
           </CardTitle>
         </CardHeader>
