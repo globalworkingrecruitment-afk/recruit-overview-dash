@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
-import { LogOut, Languages, Users, Search, Calendar } from 'lucide-react';
+import { LogOut, Users, Search, Calendar } from 'lucide-react';
 import UserStatsRow from '@/components/admin/UserStatsRow';
 import UserDetailsDialog from '@/components/admin/UserDetailsDialog';
 import logoGW from '@/assets/logo-globalworking.png';
@@ -24,8 +24,13 @@ interface UserStats {
 
 const AdminDashboard = () => {
   const { user, isAdmin, logout } = useAuth();
-  const { language, setLanguage, t } = useLanguage();
+  const { setLanguage, t } = useLanguage();
   const navigate = useNavigate();
+
+  // Always use Spanish for Admin
+  useEffect(() => {
+    setLanguage('es');
+  }, []);
   
   const [newUser, setNewUser] = useState({
     username: '',
@@ -155,14 +160,6 @@ const AdminDashboard = () => {
             </h1>
           </div>
           <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setLanguage(language === 'en' ? 'no' : 'en')}
-            >
-              <Languages className="h-4 w-4 mr-2" />
-              {language === 'en' ? 'NO' : 'EN'}
-            </Button>
             <Button variant="outline" size="sm" onClick={handleLogout}>
               <LogOut className="h-4 w-4 mr-2" />
               {t('logout')}

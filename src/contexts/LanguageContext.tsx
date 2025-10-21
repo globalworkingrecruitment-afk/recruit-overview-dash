@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState } from 'react';
 
-type Language = 'en' | 'no';
+type Language = 'en' | 'no' | 'es';
 
 interface LanguageContextType {
   language: Language;
@@ -10,33 +10,33 @@ interface LanguageContextType {
 
 const translations = {
   en: {
-    // Auth
-    login: 'Login',
-    signup: 'Sign Up',
+    // Auth - Natural English content
+    login: 'Sign In',
+    signup: 'Create Account',
     username: 'Username',
     usernameOrEmail: 'Username or Email',
     password: 'Password',
-    email: 'Email',
+    email: 'Email Address',
     fullName: 'Full Name',
-    logout: 'Logout',
-    fillAllFields: 'Please fill all required fields',
-    errorCreatingUser: 'Error creating user',
-    errorLoadingStats: 'Error loading statistics',
+    logout: 'Sign Out',
+    fillAllFields: 'Please complete all required fields',
+    errorCreatingUser: 'Unable to create user account',
+    errorLoadingStats: 'Failed to load statistics',
     
     // Admin
-    adminPanel: 'Admin Panel',
-    createUser: 'Create User',
-    userStatistics: 'User Statistics',
-    candidatesViewed: 'Candidates Viewed',
+    adminPanel: 'Administration Panel',
+    createUser: 'Add New User',
+    userStatistics: 'User Activity Overview',
+    candidatesViewed: 'Profiles Viewed',
     searches: 'Searches',
-    interviews: 'Interviews',
+    interviews: 'Interview Requests',
     viewDetails: 'View Details',
-    userDetails: 'User Details',
+    userDetails: 'User Information',
     
-    // Portal
-    candidatePortal: 'Candidate Portal',
+    // Portal - Natural English content
+    candidatePortal: 'Talent Portal',
     search: 'Search',
-    searchPlaceholder: 'Search candidates...',
+    searchPlaceholder: 'Search by name, profession, skills...',
     filterByStatus: 'Filter by Status',
     available: 'Available',
     inTraining: 'In Training',
@@ -46,80 +46,136 @@ const translations = {
     yearsOld: 'years old',
     nationality: 'Nationality',
     profession: 'Profession',
-    coverLetter: 'Cover Letter',
-    medicalExperience: 'Medical Experience',
-    nonMedicalExperience: 'Non-Medical Experience',
-    education: 'Education',
-    fullDetails: 'Full Details',
+    coverLetter: 'About Me',
+    medicalExperience: 'Healthcare Experience',
+    nonMedicalExperience: 'Other Professional Experience',
+    education: 'Education & Qualifications',
+    fullDetails: 'View Full Profile',
     close: 'Close',
     
     // Actions
-    requestInterview: 'Request Interview',
+    requestInterview: 'Schedule Interview',
     availability: 'Availability',
     submit: 'Submit',
     cancel: 'Cancel',
     
     // Messages
-    loginSuccess: 'Login successful',
-    loginError: 'Invalid credentials',
-    userCreated: 'User created successfully',
-    interviewRequested: 'Interview request sent',
+    loginSuccess: 'Welcome back!',
+    loginError: 'Invalid login credentials',
+    userCreated: 'User account created successfully',
+    interviewRequested: 'Interview request submitted successfully',
   },
   no: {
-    // Auth
+    // Auth - Natural Norwegian content
     login: 'Logg inn',
-    signup: 'Registrer deg',
+    signup: 'Opprett konto',
     username: 'Brukernavn',
     usernameOrEmail: 'Brukernavn eller e-post',
     password: 'Passord',
-    email: 'E-post',
+    email: 'E-postadresse',
     fullName: 'Fullt navn',
     logout: 'Logg ut',
-    fillAllFields: 'Vennligst fyll ut alle obligatoriske felt',
-    errorCreatingUser: 'Feil ved oppretting av bruker',
-    errorLoadingStats: 'Feil ved lasting av statistikk',
+    fillAllFields: 'Vennligst fyll ut alle feltene',
+    errorCreatingUser: 'Kunne ikke opprette brukerkonto',
+    errorLoadingStats: 'Kunne ikke laste statistikk',
     
     // Admin
-    adminPanel: 'Administrasjonspanel',
-    createUser: 'Opprett bruker',
-    userStatistics: 'Brukerstatistikk',
-    candidatesViewed: 'Kandidater sett',
+    adminPanel: 'Administrasjon',
+    createUser: 'Legg til ny bruker',
+    userStatistics: 'Brukeraktivitet',
+    candidatesViewed: 'Profiler sett',
     searches: 'Søk',
-    interviews: 'Intervjuer',
-    viewDetails: 'Vis detaljer',
-    userDetails: 'Brukerdetaljer',
+    interviews: 'Intervjuforespørsler',
+    viewDetails: 'Se detaljer',
+    userDetails: 'Brukerinformasjon',
     
-    // Portal
-    candidatePortal: 'Kandidatportal',
+    // Portal - Natural Norwegian content
+    candidatePortal: 'Talentportal',
     search: 'Søk',
-    searchPlaceholder: 'Søk kandidater...',
+    searchPlaceholder: 'Søk etter navn, yrke, kompetanse...',
     filterByStatus: 'Filtrer etter status',
     available: 'Tilgjengelig',
-    inTraining: 'I opplæring',
+    inTraining: 'Under opplæring',
     hired: 'Ansatt',
     
     // Candidate
     yearsOld: 'år',
     nationality: 'Nasjonalitet',
     profession: 'Yrke',
-    coverLetter: 'Følgebrev',
-    medicalExperience: 'Medisinsk erfaring',
-    nonMedicalExperience: 'Ikke-medisinsk erfaring',
-    education: 'Utdanning',
-    fullDetails: 'Alle detaljer',
+    coverLetter: 'Om meg',
+    medicalExperience: 'Helsefaglig erfaring',
+    nonMedicalExperience: 'Annen yrkeserfaring',
+    education: 'Utdanning og kvalifikasjoner',
+    fullDetails: 'Se hele profilen',
     close: 'Lukk',
     
     // Actions
-    requestInterview: 'Be om intervju',
+    requestInterview: 'Bestill intervju',
     availability: 'Tilgjengelighet',
-    submit: 'Send inn',
+    submit: 'Send',
     cancel: 'Avbryt',
     
     // Messages
-    loginSuccess: 'Innlogging vellykket',
-    loginError: 'Ugyldige påloggingsdetaljer',
-    userCreated: 'Bruker opprettet',
+    loginSuccess: 'Velkommen tilbake!',
+    loginError: 'Ugyldig brukernavn eller passord',
+    userCreated: 'Brukerkonto opprettet',
     interviewRequested: 'Intervjuforespørsel sendt',
+  },
+  es: {
+    // Auth - Spanish content for Admin
+    login: 'Iniciar sesión',
+    signup: 'Crear cuenta',
+    username: 'Usuario',
+    usernameOrEmail: 'Usuario o correo',
+    password: 'Contraseña',
+    email: 'Correo electrónico',
+    fullName: 'Nombre completo',
+    logout: 'Cerrar sesión',
+    fillAllFields: 'Por favor completa todos los campos obligatorios',
+    errorCreatingUser: 'Error al crear el usuario',
+    errorLoadingStats: 'Error al cargar las estadísticas',
+    
+    // Admin
+    adminPanel: 'Panel de Administración',
+    createUser: 'Crear Usuario',
+    userStatistics: 'Estadísticas de Usuarios',
+    candidatesViewed: 'Candidatos Vistos',
+    searches: 'Búsquedas',
+    interviews: 'Entrevistas',
+    viewDetails: 'Ver Detalles',
+    userDetails: 'Detalles del Usuario',
+    
+    // Portal
+    candidatePortal: 'Portal de Candidatos',
+    search: 'Buscar',
+    searchPlaceholder: 'Buscar candidatos...',
+    filterByStatus: 'Filtrar por estado',
+    available: 'Disponible',
+    inTraining: 'En formación',
+    hired: 'Contratado',
+    
+    // Candidate
+    yearsOld: 'años',
+    nationality: 'Nacionalidad',
+    profession: 'Profesión',
+    coverLetter: 'Carta de presentación',
+    medicalExperience: 'Experiencia médica',
+    nonMedicalExperience: 'Experiencia no médica',
+    education: 'Educación',
+    fullDetails: 'Detalles completos',
+    close: 'Cerrar',
+    
+    // Actions
+    requestInterview: 'Solicitar entrevista',
+    availability: 'Disponibilidad',
+    submit: 'Enviar',
+    cancel: 'Cancelar',
+    
+    // Messages
+    loginSuccess: 'Inicio de sesión exitoso',
+    loginError: 'Credenciales inválidas',
+    userCreated: 'Usuario creado correctamente',
+    interviewRequested: 'Solicitud de entrevista enviada',
   },
 };
 
