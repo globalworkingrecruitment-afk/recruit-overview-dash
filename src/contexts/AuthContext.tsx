@@ -93,50 +93,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const login = async (identifier: string, password: string): Promise<boolean> => {
     try {
-      let emailToUse = identifier;
-
-      // Si no parece un email, buscar el email por username
-      if (!identifier.includes('@')) {
-        const { data: profile, error: profileError } = await supabase
-          .from('profiles')
-          .select('id')
-          .eq('username', identifier)
-          .single();
-
-        if (profileError || !profile) {
-          toast.error('Invalid credentials');
-          return false;
-        }
-
-        // Obtener el email del usuario desde auth.users usando una función RPC
-        const { data: authUser, error: authError } = await supabase
-          .rpc('get_user_email_by_id', { user_id: profile.id });
-
-        if (authError || !authUser) {
-          toast.error('Invalid credentials');
-          return false;
-        }
-
-        emailToUse = authUser;
-      }
-
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: emailToUse,
-        password,
+      // Llamar a la edge function que maneja login con username o email
+      const { data, error } = await supabase.functions.invoke('login-with-username', {
+        body: { identifier, password }
       });
 
-      if (error) {
-        toast.error(error.message || 'Invalid credentials');
+      if (error || !data?.session) {
+        toast.error('Invalid credentials');
         return false;
       }
 
-      if (data.user) {
-        await loadUserProfile(data.user);
-        toast.success('Login successful');
-        return true;
+      // Establecer la sesión manualmente
+      const { error: sessionError } = await supabase.auth.setSession({
+        access_token: data.session.access_token,
+        refresh_token: data.session.refresh_token,
+      });
+
+      if (sessionError) {
+        toast.error('Login failed');
+        return false;
       }
 
-      return false;
+      // La sesión se cargará automáticamente por el listener onAuthStateChange
+      toast.success('Login successful');
+      return true;
     } catch (error) {
       console.error('Login error:', error);
       toast.error('Login failed');
