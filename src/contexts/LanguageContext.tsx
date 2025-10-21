@@ -42,6 +42,13 @@ const translations = {
     inTraining: 'In Training',
     hired: 'Hired',
     
+    // Statistics
+    totalCandidates: 'Total Global Working Candidates',
+    nonScandinavianShare: 'Non-Scandinavian Market Share',
+    nonScandinavianText: 'of non-Scandinavian candidates',
+    activePlacements: 'Active Placements',
+    candidatesOnPage: 'Candidates on This Page',
+    
     // Candidate
     yearsOld: 'years old',
     nationality: 'Nationality',
@@ -97,6 +104,13 @@ const translations = {
     available: 'Tilgjengelig',
     inTraining: 'Under opplæring',
     hired: 'Ansatt',
+    
+    // Statistics
+    totalCandidates: 'Total Global Working-kandidater',
+    nonScandinavianShare: 'Ikke-skandinavisk markedsandel',
+    nonScandinavianText: 'av ikke-skandinaviske kandidater',
+    activePlacements: 'Aktive plasseringer',
+    candidatesOnPage: 'Kandidater på denne siden',
     
     // Candidate
     yearsOld: 'år',

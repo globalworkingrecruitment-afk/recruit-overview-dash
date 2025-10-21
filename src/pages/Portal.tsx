@@ -5,8 +5,10 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { LogOut, Languages, Search } from 'lucide-react';
+import { LogOut, Search } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 import CandidateCard from '@/components/portal/CandidateCard';
 import CandidateDetailsDialog from '@/components/portal/CandidateDetailsDialog';
 import logoGlobalWorking from '@/assets/logo-globalworking.png';
@@ -172,15 +174,20 @@ const Portal = () => {
           <h1 className="text-4xl md:text-5xl font-bold text-primary text-center">
             {t('candidatePortal')}
           </h1>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setLanguage(language === 'en' ? 'no' : 'en')}
-            >
-              <Languages className="h-4 w-4 mr-2" />
-              {language === 'en' ? 'NO' : 'EN'}
-            </Button>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <Label htmlFor="language-switch" className="text-sm font-medium">
+                EN
+              </Label>
+              <Switch
+                id="language-switch"
+                checked={language === 'no'}
+                onCheckedChange={(checked) => setLanguage(checked ? 'no' : 'en')}
+              />
+              <Label htmlFor="language-switch" className="text-sm font-medium">
+                NO
+              </Label>
+            </div>
             <Button variant="outline" size="sm" onClick={handleLogout}>
               <LogOut className="h-4 w-4 mr-2" />
               {t('logout')}
@@ -210,7 +217,7 @@ const Portal = () => {
           <div className="bg-card rounded-lg p-6 shadow-md border border-border">
             <div className="flex flex-col items-center text-center">
               <p className="text-sm text-muted-foreground mb-2">
-                {language === 'en' ? 'Total Global Working Candidates' : 'Total kandidater Global Working'}
+                {t('totalCandidates')}
               </p>
               <p className="text-4xl font-bold text-primary">+1000</p>
             </div>
@@ -219,11 +226,11 @@ const Portal = () => {
           <div className="bg-card rounded-lg p-6 shadow-md border border-border">
             <div className="flex flex-col items-center text-center">
               <p className="text-sm text-muted-foreground mb-2">
-                {language === 'en' ? 'Non-Scandinavian Market Share' : 'Ikke-skandinavisk markedsandel'}
+                {t('nonScandinavianShare')}
               </p>
               <p className="text-4xl font-bold text-primary">1/3</p>
               <p className="text-xs text-muted-foreground mt-1">
-                {language === 'en' ? 'of non-Scandinavian candidates' : 'av ikke-skandinaviske kandidater'}
+                {t('nonScandinavianText')}
               </p>
             </div>
           </div>
@@ -231,7 +238,7 @@ const Portal = () => {
           <div className="bg-card rounded-lg p-6 shadow-md border border-border">
             <div className="flex flex-col items-center text-center">
               <p className="text-sm text-muted-foreground mb-2">
-                {language === 'en' ? 'Active Placements' : 'Aktive plasseringer'}
+                {t('activePlacements')}
               </p>
               <p className="text-4xl font-bold text-primary">
                 {candidates.filter(c => c.estado.match(/^hired - \d{4}$/i)).length}
@@ -242,7 +249,7 @@ const Portal = () => {
           <div className="bg-card rounded-lg p-6 shadow-md border border-border">
             <div className="flex flex-col items-center text-center">
               <p className="text-sm text-muted-foreground mb-2">
-                {language === 'en' ? 'Candidates on This Page' : 'Kandidater på denne siden'}
+                {t('candidatesOnPage')}
               </p>
               <p className="text-4xl font-bold text-primary">{filteredCandidates.length}</p>
             </div>
