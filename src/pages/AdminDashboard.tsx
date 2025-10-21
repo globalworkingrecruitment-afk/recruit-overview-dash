@@ -48,6 +48,27 @@ const AdminDashboard = () => {
       return;
     }
     fetchUserStats();
+
+    // Escuchar cambios en profiles para actualizar automáticamente
+    const channel = supabase
+      .channel('admin-dashboard-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'profiles'
+        },
+        () => {
+          console.log('Profile change detected, refreshing stats...');
+          fetchUserStats();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [user, isAdmin, navigate]);
 
   const fetchUserStats = async () => {
@@ -125,8 +146,8 @@ const AdminDashboard = () => {
       toast.success('Usuario creado exitosamente');
       setNewUser({ username: '', password: '', fullName: '', email: '' });
       
-      // Refresh user stats
-      setTimeout(() => fetchUserStats(), 500);
+      // Refresh user stats inmediatamente
+      await fetchUserStats();
     } catch (error: any) {
       console.error('Error creating user:', error);
       toast.error(error.message || 'Error al crear usuario');
