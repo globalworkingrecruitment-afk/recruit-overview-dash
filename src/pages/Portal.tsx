@@ -205,6 +205,50 @@ const Portal = () => {
           </Button>
         </div>
 
+        {/* Statistics Section */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="bg-card rounded-lg p-6 shadow-md border border-border">
+            <div className="flex flex-col items-center text-center">
+              <p className="text-sm text-muted-foreground mb-2">
+                {language === 'en' ? 'Total Global Working Candidates' : 'Total kandidater Global Working'}
+              </p>
+              <p className="text-4xl font-bold text-primary">+1000</p>
+            </div>
+          </div>
+
+          <div className="bg-card rounded-lg p-6 shadow-md border border-border">
+            <div className="flex flex-col items-center text-center">
+              <p className="text-sm text-muted-foreground mb-2">
+                {language === 'en' ? 'Non-Scandinavian Market Share' : 'Ikke-skandinavisk markedsandel'}
+              </p>
+              <p className="text-4xl font-bold text-primary">1/3</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                {language === 'en' ? 'of non-Scandinavian candidates' : 'av ikke-skandinaviske kandidater'}
+              </p>
+            </div>
+          </div>
+
+          <div className="bg-card rounded-lg p-6 shadow-md border border-border">
+            <div className="flex flex-col items-center text-center">
+              <p className="text-sm text-muted-foreground mb-2">
+                {language === 'en' ? 'Active Placements' : 'Aktive plasseringer'}
+              </p>
+              <p className="text-4xl font-bold text-primary">
+                {candidates.filter(c => c.estado.match(/^hired - \d{4}$/i)).length}
+              </p>
+            </div>
+          </div>
+
+          <div className="bg-card rounded-lg p-6 shadow-md border border-border">
+            <div className="flex flex-col items-center text-center">
+              <p className="text-sm text-muted-foreground mb-2">
+                {language === 'en' ? 'Candidates on This Page' : 'Kandidater på denne siden'}
+              </p>
+              <p className="text-4xl font-bold text-primary">{filteredCandidates.length}</p>
+            </div>
+          </div>
+        </div>
+
         {/* Status Filter */}
         <Tabs value={statusFilter} onValueChange={(val) => {
           setStatusFilter(val);
