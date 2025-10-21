@@ -42,7 +42,7 @@ const Portal = () => {
   const [filteredCandidates, setFilteredCandidates] = useState<Candidate[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null);
-  const [statusFilter, setStatusFilter] = useState<string>('activo');
+  const [statusFilter, setStatusFilter] = useState<string>('Available');
 
   useEffect(() => {
     if (!user) {
@@ -112,11 +112,11 @@ const Portal = () => {
 
   const getStatusKey = (status: string) => {
     switch (status) {
-      case 'activo':
+      case 'Available':
         return 'available';
-      case 'en_formacion':
+      case 'In Training':
         return 'inTraining';
-      case 'contratado':
+      case 'Hired':
         return 'hired';
       default:
         return 'available';
@@ -174,9 +174,9 @@ const Portal = () => {
         {/* Status Filter */}
         <Tabs value={statusFilter} onValueChange={setStatusFilter}>
           <TabsList>
-            <TabsTrigger value="activo">{t(getStatusKey('activo'))}</TabsTrigger>
-            <TabsTrigger value="en_formacion">{t(getStatusKey('en_formacion'))}</TabsTrigger>
-            <TabsTrigger value="contratado">{t(getStatusKey('contratado'))}</TabsTrigger>
+            <TabsTrigger value="Available">{t(getStatusKey('Available'))}</TabsTrigger>
+            <TabsTrigger value="In Training">{t(getStatusKey('In Training'))}</TabsTrigger>
+            <TabsTrigger value="Hired">{t(getStatusKey('Hired'))}</TabsTrigger>
           </TabsList>
 
           <TabsContent value={statusFilter} className="mt-6">
