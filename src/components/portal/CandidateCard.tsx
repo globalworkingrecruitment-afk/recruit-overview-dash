@@ -16,6 +16,7 @@ interface CandidateCardProps {
     carta_resumen_no: string | null;
     experiencia_medica_en: string | null;
     experiencia_medica_no: string | null;
+    estado: string;
   };
   onExpand: () => void;
 }
@@ -46,8 +47,22 @@ const CandidateCard = ({ candidate, onExpand }: CandidateCardProps) => {
   const coverLetterSummary = language === 'en' ? candidate.carta_resumen_en : candidate.carta_resumen_no;
   const medicalExperience = language === 'en' ? candidate.experiencia_medica_en : candidate.experiencia_medica_no;
 
+  const getBorderClass = () => {
+    const status = candidate.estado.toLowerCase();
+    if (status === 'available') {
+      return 'border-2 border-green-500 shadow-[0_0_15px_rgba(34,197,94,0.5)]';
+    }
+    if (status === 'in training') {
+      return 'border-2 border-orange-500 shadow-[0_0_15px_rgba(249,115,22,0.5)]';
+    }
+    if (status.startsWith('hired')) {
+      return 'border-2 border-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.5)]';
+    }
+    return '';
+  };
+
   return (
-    <Card className="hover:shadow-lg transition-all duration-300 bg-gradient-card">
+    <Card className={`hover:shadow-lg transition-all duration-300 bg-gradient-card ${getBorderClass()}`}>
       <CardHeader className="flex flex-row items-start justify-between pb-2">
         <div className="flex items-center gap-3">
           <div className="w-14 h-14 rounded-full bg-gradient-primary flex items-center justify-center text-white font-bold text-xl shadow-lg">
