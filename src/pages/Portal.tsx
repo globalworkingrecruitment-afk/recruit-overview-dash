@@ -43,6 +43,8 @@ const Portal = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>('Available');
+  const [hiredYearFilter, setHiredYearFilter] = useState<string>('all');
+  const [hiredYears, setHiredYears] = useState<string[]>([]);
 
   useEffect(() => {
     if (!user) {
@@ -54,7 +56,8 @@ const Portal = () => {
 
   useEffect(() => {
     filterCandidates();
-  }, [searchQuery, statusFilter, candidates, language]);
+    extractHiredYears();
+  }, [searchQuery, statusFilter, hiredYearFilter, candidates, language]);
 
   const fetchCandidates = async () => {
     try {
@@ -70,8 +73,41 @@ const Portal = () => {
     }
   };
 
+  const extractHiredYears = () => {
+    const hiredPattern = /^hired - (\d{4})$/i;
+    const years = new Set<string>();
+    
+    candidates.forEach((c) => {
+      const match = c.estado.match(hiredPattern);
+      if (match) {
+        years.add(match[1]);
+      }
+    });
+    
+    setHiredYears(Array.from(years).sort().reverse());
+  };
+
   const filterCandidates = () => {
-    let filtered = candidates.filter((c) => c.estado === statusFilter);
+    let filtered: Candidate[] = [];
+
+    if (statusFilter === 'Hired') {
+      // Filtrar candidatos con estado "hired - YYYY"
+      const hiredPattern = /^hired - (\d{4})$/i;
+      filtered = candidates.filter((c) => {
+        const match = c.estado.match(hiredPattern);
+        if (!match) return false;
+        
+        // Si hay filtro de año específico, aplicarlo
+        if (hiredYearFilter !== 'all' && match[1] !== hiredYearFilter) {
+          return false;
+        }
+        
+        return true;
+      });
+    } else {
+      // Filtrado normal para Available e In Training
+      filtered = candidates.filter((c) => c.estado === statusFilter);
+    }
 
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
@@ -170,14 +206,17 @@ const Portal = () => {
         </div>
 
         {/* Status Filter */}
-        <Tabs value={statusFilter} onValueChange={setStatusFilter}>
+        <Tabs value={statusFilter} onValueChange={(val) => {
+          setStatusFilter(val);
+          if (val === 'Hired') setHiredYearFilter('all');
+        }}>
           <TabsList>
             <TabsTrigger value="Available">{t(getStatusKey('Available'))}</TabsTrigger>
             <TabsTrigger value="In Training">{t(getStatusKey('In Training'))}</TabsTrigger>
             <TabsTrigger value="Hired">{t(getStatusKey('Hired'))}</TabsTrigger>
           </TabsList>
 
-          <TabsContent value={statusFilter} className="mt-6">
+          <TabsContent value="Available" className="mt-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredCandidates.map((candidate) => (
                 <CandidateCard
@@ -190,6 +229,62 @@ const Portal = () => {
             {filteredCandidates.length === 0 && (
               <p className="text-center text-muted-foreground py-12">
                 No candidates found
+              </p>
+            )}
+          </TabsContent>
+
+          <TabsContent value="In Training" className="mt-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredCandidates.map((candidate) => (
+                <CandidateCard
+                  key={candidate.id}
+                  candidate={candidate}
+                  onExpand={() => setSelectedCandidate(candidate)}
+                />
+              ))}
+            </div>
+            {filteredCandidates.length === 0 && (
+              <p className="text-center text-muted-foreground py-12">
+                No candidates found
+              </p>
+            )}
+          </TabsContent>
+
+          <TabsContent value="Hired" className="mt-6 space-y-6">
+            {/* Year Filter for Hired */}
+            {hiredYears.length > 0 && (
+              <Tabs value={hiredYearFilter} onValueChange={setHiredYearFilter}>
+                <TabsList>
+                  <TabsTrigger value="all">All</TabsTrigger>
+                  {hiredYears.map((year) => (
+                    <TabsTrigger key={year} value={year}>
+                      {year}
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
+
+                <TabsContent value={hiredYearFilter} className="mt-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {filteredCandidates.map((candidate) => (
+                      <CandidateCard
+                        key={candidate.id}
+                        candidate={candidate}
+                        onExpand={() => setSelectedCandidate(candidate)}
+                      />
+                    ))}
+                  </div>
+                  {filteredCandidates.length === 0 && (
+                    <p className="text-center text-muted-foreground py-12">
+                      No candidates found
+                    </p>
+                  )}
+                </TabsContent>
+              </Tabs>
+            )}
+            
+            {hiredYears.length === 0 && (
+              <p className="text-center text-muted-foreground py-12">
+                No hired candidates found
               </p>
             )}
           </TabsContent>
