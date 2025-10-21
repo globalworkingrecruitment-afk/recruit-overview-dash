@@ -7,8 +7,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { LogOut, Search } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
 import CandidateCard from '@/components/portal/CandidateCard';
 import CandidateDetailsDialog from '@/components/portal/CandidateDetailsDialog';
 import logoGlobalWorking from '@/assets/logo-globalworking.png';
@@ -44,7 +42,7 @@ const Portal = () => {
   const [filteredCandidates, setFilteredCandidates] = useState<Candidate[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null);
-  const [statusFilter, setStatusFilter] = useState<string>('Available');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
   const [hiredYearFilter, setHiredYearFilter] = useState<string>('all');
   const [hiredYears, setHiredYears] = useState<string[]>([]);
 
@@ -92,7 +90,10 @@ const Portal = () => {
   const filterCandidates = () => {
     let filtered: Candidate[] = [];
 
-    if (statusFilter === 'Hired') {
+    if (statusFilter === 'all') {
+      // Mostrar todos los candidatos
+      filtered = [...candidates];
+    } else if (statusFilter === 'Hired') {
       // Filtrar candidatos con estado "hired - YYYY"
       const hiredPattern = /^hired - (\d{4})$/i;
       filtered = candidates.filter((c) => {
@@ -163,36 +164,57 @@ const Portal = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-secondary to-background">
+      {/* Fixed Header */}
+      <div className="sticky top-0 z-50 bg-gradient-to-r from-primary via-orange-500 to-primary shadow-lg">
+        <div className="container mx-auto px-6 py-4">
+          <div className="flex justify-between items-center">
+            {/* Logo */}
+            <img 
+              src={logoGlobalWorking} 
+              alt="Global Working" 
+              className="h-12 object-contain"
+            />
+            
+            {/* Right side controls */}
+            <div className="flex items-center gap-4">
+              {/* Language Switch */}
+              <div className="relative flex items-center bg-white/20 backdrop-blur-sm rounded-full p-1">
+                <span className={`absolute left-1 top-1/2 -translate-y-1/2 w-12 h-8 bg-white rounded-full transition-transform duration-300 ${language === 'no' ? 'translate-x-12' : 'translate-x-0'}`} />
+                <button
+                  onClick={() => setLanguage('en')}
+                  className={`relative z-10 px-4 py-2 text-sm font-semibold transition-colors duration-300 ${language === 'en' ? 'text-primary' : 'text-white'}`}
+                >
+                  EN
+                </button>
+                <button
+                  onClick={() => setLanguage('no')}
+                  className={`relative z-10 px-4 py-2 text-sm font-semibold transition-colors duration-300 ${language === 'no' ? 'text-primary' : 'text-white'}`}
+                >
+                  NO
+                </button>
+              </div>
+              
+              {/* Logout Button */}
+              <Button 
+                variant="secondary" 
+                size="sm" 
+                onClick={handleLogout}
+                className="bg-white hover:bg-white/90 text-primary"
+              >
+                <LogOut className="h-4 w-4 mr-2" />
+                {t('logout')}
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="container mx-auto p-6 space-y-8">
-        {/* Header */}
-        <div className="flex flex-col items-center justify-center gap-6 pt-4">
-          <img 
-            src={logoGlobalWorking} 
-            alt="Global Working" 
-            className="h-24 md:h-32 object-contain"
-          />
-          <h1 className="text-4xl md:text-5xl font-bold text-primary text-center">
+        {/* Title */}
+        <div className="flex flex-col items-center justify-center gap-4 pt-4">
+          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary via-orange-500 to-primary bg-clip-text text-transparent text-center">
             {t('candidatePortal')}
           </h1>
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <Label htmlFor="language-switch" className="text-sm font-medium">
-                EN
-              </Label>
-              <Switch
-                id="language-switch"
-                checked={language === 'no'}
-                onCheckedChange={(checked) => setLanguage(checked ? 'no' : 'en')}
-              />
-              <Label htmlFor="language-switch" className="text-sm font-medium">
-                NO
-              </Label>
-            </div>
-            <Button variant="outline" size="sm" onClick={handleLogout}>
-              <LogOut className="h-4 w-4 mr-2" />
-              {t('logout')}
-            </Button>
-          </div>
         </div>
 
         {/* Search */}
@@ -261,11 +283,37 @@ const Portal = () => {
           setStatusFilter(val);
           if (val === 'Hired') setHiredYearFilter('all');
         }}>
-          <TabsList>
-            <TabsTrigger value="Available">{t(getStatusKey('Available'))}</TabsTrigger>
-            <TabsTrigger value="In Training">{t(getStatusKey('In Training'))}</TabsTrigger>
-            <TabsTrigger value="Hired">{t(getStatusKey('Hired'))}</TabsTrigger>
+          <TabsList className="bg-muted/50">
+            <TabsTrigger value="all" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-orange-500 data-[state=active]:text-white">
+              {language === 'en' ? 'All' : 'Alle'}
+            </TabsTrigger>
+            <TabsTrigger value="Available" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-orange-500 data-[state=active]:text-white">
+              {t(getStatusKey('Available'))}
+            </TabsTrigger>
+            <TabsTrigger value="In Training" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-orange-500 data-[state=active]:text-white">
+              {t(getStatusKey('In Training'))}
+            </TabsTrigger>
+            <TabsTrigger value="Hired" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-orange-500 data-[state=active]:text-white">
+              {t(getStatusKey('Hired'))}
+            </TabsTrigger>
           </TabsList>
+
+          <TabsContent value="all" className="mt-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredCandidates.map((candidate) => (
+                <CandidateCard
+                  key={candidate.id}
+                  candidate={candidate}
+                  onExpand={() => setSelectedCandidate(candidate)}
+                />
+              ))}
+            </div>
+            {filteredCandidates.length === 0 && (
+              <p className="text-center text-muted-foreground py-12">
+                {language === 'en' ? 'No candidates found' : 'Ingen kandidater funnet'}
+              </p>
+            )}
+          </TabsContent>
 
           <TabsContent value="Available" className="mt-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -279,7 +327,7 @@ const Portal = () => {
             </div>
             {filteredCandidates.length === 0 && (
               <p className="text-center text-muted-foreground py-12">
-                No candidates found
+                {language === 'en' ? 'No candidates found' : 'Ingen kandidater funnet'}
               </p>
             )}
           </TabsContent>
@@ -296,7 +344,7 @@ const Portal = () => {
             </div>
             {filteredCandidates.length === 0 && (
               <p className="text-center text-muted-foreground py-12">
-                No candidates found
+                {language === 'en' ? 'No candidates found' : 'Ingen kandidater funnet'}
               </p>
             )}
           </TabsContent>

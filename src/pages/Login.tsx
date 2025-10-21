@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Languages } from 'lucide-react';
 import logoGW from '@/assets/logo-globalworking.png';
 
 const Login = () => {
@@ -40,32 +39,39 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-secondary to-background p-4">
+      {/* Language Switch - Top Right */}
       <div className="absolute top-4 right-4">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setLanguage(language === 'en' ? 'no' : 'en')}
-          className="gap-2"
-        >
-          <Languages className="h-4 w-4" />
-          {language === 'en' ? 'NO' : 'EN'}
-        </Button>
+        <div className="relative flex items-center bg-gradient-to-r from-primary to-orange-500 rounded-full p-1 shadow-lg">
+          <span className={`absolute left-1 top-1/2 -translate-y-1/2 w-12 h-8 bg-white rounded-full transition-transform duration-300 ${language === 'no' ? 'translate-x-12' : 'translate-x-0'}`} />
+          <button
+            onClick={() => setLanguage('en')}
+            className={`relative z-10 px-4 py-2 text-sm font-semibold transition-colors duration-300 ${language === 'en' ? 'text-primary' : 'text-white'}`}
+          >
+            EN
+          </button>
+          <button
+            onClick={() => setLanguage('no')}
+            className={`relative z-10 px-4 py-2 text-sm font-semibold transition-colors duration-300 ${language === 'no' ? 'text-primary' : 'text-white'}`}
+          >
+            NO
+          </button>
+        </div>
       </div>
 
-      <Card className="w-full max-w-md shadow-lg">
-        <CardHeader className="space-y-4 text-center">
+      <Card className="w-full max-w-md shadow-lg border-2 border-primary/10">
+        <CardHeader className="space-y-4 text-center bg-gradient-to-br from-primary/5 to-orange-500/5">
           <div className="flex justify-center">
             <img 
               src={logoGW} 
               alt="GlobalWorking" 
-              className="h-16 object-contain"
+              className="h-20 object-contain"
             />
           </div>
-          <CardTitle className="text-2xl font-bold text-primary">
+          <CardTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-orange-500 bg-clip-text text-transparent">
             {t('candidatePortal')}
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pt-6">
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="identifier">{t('usernameOrEmail')}</Label>
@@ -75,6 +81,7 @@ const Login = () => {
                 value={identifier}
                 onChange={(e) => setIdentifier(e.target.value)}
                 required
+                className="border-2 focus:border-orange-500"
               />
             </div>
             
@@ -86,10 +93,15 @@ const Login = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                className="border-2 focus:border-orange-500"
               />
             </div>
 
-            <Button type="submit" className="w-full" disabled={submitting}>
+            <Button 
+              type="submit" 
+              className="w-full bg-gradient-to-r from-primary to-orange-500 hover:from-primary/90 hover:to-orange-500/90" 
+              disabled={submitting}
+            >
               {submitting ? '...' : t('login')}
             </Button>
           </form>
