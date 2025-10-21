@@ -30,8 +30,9 @@ serve(async (req) => {
 
     console.log('App user authentication result:', { appUser, error: appUserError })
 
-    if (appUserError || !appUser) {
-      console.log('Authentication failed')
+    // Verificar si la autenticación falló o si el usuario no existe (null o con id null)
+    if (appUserError || !appUser || !appUser.id) {
+      console.log('Authentication failed - invalid credentials')
       return new Response(
         JSON.stringify({ error: 'Invalid credentials' }),
         { 
