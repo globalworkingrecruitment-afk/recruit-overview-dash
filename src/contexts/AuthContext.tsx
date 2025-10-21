@@ -29,12 +29,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Set up auth state listener
+    // Set up auth state listener - CRITICAL: Do not use async/await here to prevent deadlocks
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
+      (_event, session) => {
         setSession(session);
         if (session?.user) {
-          await loadUserProfile(session.user);
+          // Use setTimeout to defer async operations and prevent blocking
+          setTimeout(() => {
+            loadUserProfile(session.user);
+          }, 0);
         } else {
           setUser(null);
           setIsAdmin(false);
@@ -46,7 +49,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       if (session?.user) {
-        loadUserProfile(session.user).then(() => setLoading(false));
+        loadUserProfile(session.user).finally(() => setLoading(false));
       } else {
         setLoading(false);
       }
@@ -57,20 +60,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const loadUserProfile = async (authUser: User) => {
     try {
-      // Get profile
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', authUser.id)
-        .single();
+      // Optimized: Fetch profile and roles in parallel
+      const [profileResult, rolesResult] = await Promise.all([
+        supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', authUser.id)
+          .maybeSingle(),
+        supabase
+          .from('user_roles')
+          .select('role')
+          .eq('user_id', authUser.id)
+      ]);
 
-      // Check if user is admin
-      const { data: roles } = await supabase
-        .from('user_roles')
-        .select('role')
-        .eq('user_id', authUser.id);
-
-      const hasAdminRole = roles?.some(r => r.role === 'admin') || false;
+      const profile = profileResult.data;
+      const hasAdminRole = rolesResult.data?.some(r => r.role === 'admin') || false;
 
       setUser({
         id: authUser.id,
@@ -81,10 +85,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       });
       setIsAdmin(hasAdminRole);
 
-      // Log access
-      await supabase.from('access_logs').insert({
+      // Log access asynchronously without waiting
+      supabase.from('access_logs').insert({
         username: profile?.username || authUser.email || 'unknown',
         role: hasAdminRole ? 'admin' : 'user',
+      }).then(({ error }) => {
+        if (error) console.error('Error logging access:', error);
       });
     } catch (error) {
       console.error('Error loading user profile:', error);
