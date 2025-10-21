@@ -172,7 +172,7 @@ const Portal = () => {
   };
 
   return (
-    <div className="min-h-screen bg-secondary/30">
+    <div className="min-h-screen bg-secondary/20">
       {/* Fixed Header */}
       <div className="sticky top-0 z-50 bg-white shadow-md">
         <div className="container mx-auto px-6 py-4">
@@ -192,7 +192,7 @@ const Portal = () => {
             {/* Language Switch & Logout - right */}
             <div className="flex items-center justify-end gap-4">
               <div className="relative flex items-center bg-muted rounded-full p-1">
-                <span className={`absolute left-1 top-1/2 -translate-y-1/2 w-12 h-8 bg-primary rounded-full transition-transform duration-300 ${language === 'no' ? 'translate-x-12' : 'translate-x-0'}`} />
+                <span className={`absolute left-1 top-1/2 -translate-y-1/2 w-12 h-8 bg-accent rounded-full transition-transform duration-300 ${language === 'no' ? 'translate-x-12' : 'translate-x-0'}`} />
                 <button
                   onClick={() => setLanguage('en')}
                   className={`relative z-10 px-4 py-2 text-sm font-semibold transition-colors duration-300 ${language === 'en' ? 'text-white' : 'text-foreground'}`}
@@ -240,7 +240,7 @@ const Portal = () => {
               className="pl-10"
             />
           </div>
-          <Button onClick={handleSearch}>
+          <Button onClick={handleSearch} className="bg-accent hover:bg-accent/90 text-accent-foreground">
             {t('search')}
           </Button>
         </div>
@@ -252,7 +252,7 @@ const Portal = () => {
               <p className="text-sm text-muted-foreground mb-2">
                 {t('totalCandidates')}
               </p>
-              <p className="text-4xl font-bold text-primary">+1000</p>
+              <p className="text-4xl font-bold text-accent">+1000</p>
             </div>
           </div>
 
@@ -261,7 +261,7 @@ const Portal = () => {
               <p className="text-sm text-muted-foreground mb-2">
                 {t('nonScandinavianShare')}
               </p>
-              <p className="text-4xl font-bold text-primary">1/3</p>
+              <p className="text-4xl font-bold text-accent">1/3</p>
               <p className="text-xs text-muted-foreground mt-1">
                 {t('nonScandinavianText')}
               </p>
@@ -273,7 +273,7 @@ const Portal = () => {
               <p className="text-sm text-muted-foreground mb-2">
                 {t('activePlacements')}
               </p>
-              <p className="text-4xl font-bold text-primary">
+              <p className="text-4xl font-bold text-accent">
                 {candidates.filter(c => c.estado.match(/^hired - \d{4}$/i)).length}
               </p>
             </div>
@@ -284,7 +284,7 @@ const Portal = () => {
               <p className="text-sm text-muted-foreground mb-2">
                 {t('candidatesOnPage')}
               </p>
-              <p className="text-4xl font-bold text-primary">{filteredCandidates.length}</p>
+              <p className="text-4xl font-bold text-accent">{filteredCandidates.length}</p>
             </div>
           </div>
         </div>
@@ -295,16 +295,16 @@ const Portal = () => {
           if (val === 'Hired') setHiredYearFilter('all');
         }}>
           <TabsList className="bg-muted">
-            <TabsTrigger value="all" className="data-[state=active]:bg-primary data-[state=active]:text-white">
+            <TabsTrigger value="all" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">
               {language === 'en' ? 'All' : 'Alle'}
             </TabsTrigger>
-            <TabsTrigger value="Available" className="data-[state=active]:bg-primary data-[state=active]:text-white">
+            <TabsTrigger value="Available" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">
               {t(getStatusKey('Available'))}
             </TabsTrigger>
-            <TabsTrigger value="In Training" className="data-[state=active]:bg-primary data-[state=active]:text-white">
+            <TabsTrigger value="In Training" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">
               {t(getStatusKey('In Training'))}
             </TabsTrigger>
-            <TabsTrigger value="Hired" className="data-[state=active]:bg-primary data-[state=active]:text-white">
+            <TabsTrigger value="Hired" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">
               {t(getStatusKey('Hired'))}
             </TabsTrigger>
           </TabsList>
