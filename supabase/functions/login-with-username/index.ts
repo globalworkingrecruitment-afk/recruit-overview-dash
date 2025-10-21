@@ -14,54 +14,82 @@ serve(async (req) => {
   try {
     const { identifier, password } = await req.json()
 
+    console.log('Login attempt:', { identifier })
+
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    let email = identifier
+    // Primero autenticar contra app_users
+    const { data: appUser, error: appUserError } = await supabaseClient
+      .rpc('authenticate_app_user', {
+        p_identifier: identifier,
+        p_password: password
+      })
 
-    // Si no es un email, buscar el email por username
-    if (!identifier.includes('@')) {
-      const { data: profile, error: profileError } = await supabaseClient
-        .from('profiles')
-        .select('id')
-        .eq('username', identifier)
-        .maybeSingle()
+    console.log('App user authentication result:', { appUser, error: appUserError })
 
-      if (profileError || !profile) {
-        return new Response(
-          JSON.stringify({ error: 'Invalid credentials' }),
-          { 
-            status: 401, 
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-          }
-        )
-      }
-
-      // Obtener el email del usuario
-      const { data: authUser, error: authError } = await supabaseClient.auth.admin.getUserById(
-        profile.id
+    if (appUserError || !appUser) {
+      console.log('Authentication failed')
+      return new Response(
+        JSON.stringify({ error: 'Invalid credentials' }),
+        { 
+          status: 401, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
       )
-
-      if (authError || !authUser.user) {
-        return new Response(
-          JSON.stringify({ error: 'Invalid credentials' }),
-          { 
-            status: 401, 
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-          }
-        )
-      }
-
-      email = authUser.user.email || ''
     }
 
-    // Ahora hacemos login con el email
+    // Usuario autenticado en app_users, ahora verificar/crear en Supabase Auth
+    let authEmail = appUser.email || `${appUser.username}@app.local`
+    
+    console.log('Checking if user exists in Auth:', { authEmail })
+
+    // Intentar encontrar el usuario en Auth
+    const { data: existingUsers } = await supabaseClient.auth.admin.listUsers()
+    let authUser = existingUsers?.users?.find(u => 
+      u.email === authEmail || u.user_metadata?.username === appUser.username
+    )
+
+    console.log('Existing auth user:', { found: !!authUser })
+
+    // Si no existe en Auth, crear el usuario
+    if (!authUser) {
+      console.log('Creating user in Auth')
+      const { data: newAuthUser, error: createError } = await supabaseClient.auth.admin.createUser({
+        email: authEmail,
+        password: password,
+        email_confirm: true,
+        user_metadata: {
+          username: appUser.username,
+          full_name: appUser.full_name
+        }
+      })
+
+      if (createError) {
+        console.error('Error creating auth user:', createError)
+        return new Response(
+          JSON.stringify({ error: 'Error creating authentication session' }),
+          { 
+            status: 500, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+          }
+        )
+      }
+
+      authUser = newAuthUser.user
+    }
+
+    console.log('Attempting sign in')
+
+    // Autenticar contra Supabase Auth para obtener los tokens
     const { data, error } = await supabaseClient.auth.signInWithPassword({
-      email,
-      password,
+      email: authEmail,
+      password: password,
     })
+
+    console.log('Sign in result:', { success: !!data, error })
 
     if (error) {
       return new Response(
