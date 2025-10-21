@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -52,15 +52,23 @@ const CandidateDetailsDialog = ({ candidate, onClose }: CandidateDetailsDialogPr
   const education = language === 'en' ? candidate.formacion_en : candidate.formacion_no;
 
   // Log view when dialog opens
-  useState(() => {
-    if (user) {
-      supabase.from('candidate_view_logs').insert({
-        employer_username: user.username,
-        candidate_id: candidate.id,
-        candidate_name: candidate.nombre,
-      });
-    }
-  });
+  useEffect(() => {
+    const logView = async () => {
+      if (user) {
+        try {
+          await supabase.from('candidate_view_logs').insert({
+            employer_username: user.username,
+            candidate_id: candidate.id,
+            candidate_name: candidate.nombre,
+          });
+        } catch (error) {
+          console.error('Error logging view:', error);
+        }
+      }
+    };
+    
+    logView();
+  }, [user, candidate.id, candidate.nombre]);
 
   const handleInterviewRequest = async () => {
     if (!availability.trim() || !user) return;
