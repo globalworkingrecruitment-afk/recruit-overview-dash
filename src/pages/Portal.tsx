@@ -172,48 +172,46 @@ const Portal = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-secondary to-background">
+    <div className="min-h-screen bg-secondary/30">
       {/* Fixed Header */}
-      <div className="sticky top-0 z-50 bg-gradient-to-r from-primary via-orange-500 to-primary shadow-lg">
+      <div className="sticky top-0 z-50 bg-white shadow-md">
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
-            {/* Logout Button */}
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={handleLogout}
-              className="bg-white hover:bg-white/90 text-primary shadow-sm"
-            >
-              <LogOut className="h-4 w-4 mr-2" />
-              {t('logout')}
-            </Button>
-
             {/* Logo */}
             <div className="flex-1 flex justify-center">
               <img
                 src={logoGlobalWorking}
                 alt="Global Working"
-                className="h-14 object-contain drop-shadow-md"
+                className="h-14 object-contain"
               />
             </div>
 
-            {/* Language Switch */}
-            <div className="flex items-center justify-end flex-1">
-              <div className="relative flex items-center bg-white/20 backdrop-blur-sm rounded-full p-1 shadow-inner">
-                <span className={`absolute left-1 top-1/2 -translate-y-1/2 w-12 h-8 bg-white rounded-full transition-transform duration-300 ${language === 'no' ? 'translate-x-12' : 'translate-x-0'}`} />
+            {/* Language Switch & Logout */}
+            <div className="flex items-center gap-4">
+              <div className="relative flex items-center bg-muted rounded-full p-1">
+                <span className={`absolute left-1 top-1/2 -translate-y-1/2 w-12 h-8 bg-primary rounded-full transition-transform duration-300 ${language === 'no' ? 'translate-x-12' : 'translate-x-0'}`} />
                 <button
                   onClick={() => setLanguage('en')}
-                  className={`relative z-10 px-4 py-2 text-sm font-semibold transition-colors duration-300 ${language === 'en' ? 'text-primary' : 'text-white'}`}
+                  className={`relative z-10 px-4 py-2 text-sm font-semibold transition-colors duration-300 ${language === 'en' ? 'text-white' : 'text-foreground'}`}
                 >
                   EN
                 </button>
                 <button
                   onClick={() => setLanguage('no')}
-                  className={`relative z-10 px-4 py-2 text-sm font-semibold transition-colors duration-300 ${language === 'no' ? 'text-primary' : 'text-white'}`}
+                  className={`relative z-10 px-4 py-2 text-sm font-semibold transition-colors duration-300 ${language === 'no' ? 'text-white' : 'text-foreground'}`}
                 >
                   NO
                 </button>
               </div>
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleLogout}
+              >
+                <LogOut className="h-4 w-4 mr-2" />
+                {t('logout')}
+              </Button>
             </div>
           </div>
         </div>
@@ -222,7 +220,7 @@ const Portal = () => {
       <div className="container mx-auto p-6 space-y-8">
         {/* Title */}
         <div className="flex flex-col items-center justify-center gap-4 pt-4">
-          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary via-orange-500 to-primary bg-clip-text text-transparent text-center">
+          <h1 className="text-4xl md:text-5xl font-bold text-primary text-center">
             {t('candidatePortal')}
           </h1>
         </div>
@@ -293,17 +291,17 @@ const Portal = () => {
           setStatusFilter(val);
           if (val === 'Hired') setHiredYearFilter('all');
         }}>
-          <TabsList className="bg-muted/50">
-            <TabsTrigger value="all" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-orange-500 data-[state=active]:text-white">
+          <TabsList className="bg-muted">
+            <TabsTrigger value="all" className="data-[state=active]:bg-primary data-[state=active]:text-white">
               {language === 'en' ? 'All' : 'Alle'}
             </TabsTrigger>
-            <TabsTrigger value="Available" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-orange-500 data-[state=active]:text-white">
+            <TabsTrigger value="Available" className="data-[state=active]:bg-primary data-[state=active]:text-white">
               {t(getStatusKey('Available'))}
             </TabsTrigger>
-            <TabsTrigger value="In Training" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-orange-500 data-[state=active]:text-white">
+            <TabsTrigger value="In Training" className="data-[state=active]:bg-primary data-[state=active]:text-white">
               {t(getStatusKey('In Training'))}
             </TabsTrigger>
-            <TabsTrigger value="Hired" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-orange-500 data-[state=active]:text-white">
+            <TabsTrigger value="Hired" className="data-[state=active]:bg-primary data-[state=active]:text-white">
               {t(getStatusKey('Hired'))}
             </TabsTrigger>
           </TabsList>
