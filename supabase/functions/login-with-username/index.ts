@@ -85,16 +85,40 @@ serve(async (req) => {
     console.log('Attempting sign in')
 
     // Autenticar contra Supabase Auth para obtener los tokens
-    const { data, error } = await supabaseClient.auth.signInWithPassword({
+    let { data, error } = await supabaseClient.auth.signInWithPassword({
       email: authEmail,
       password: password,
     })
 
     console.log('Sign in result:', { success: !!data, error })
 
+    // Si las credenciales del usuario en Auth no coinciden, sincronizamos la contraseña y reintentamos
+    if (error && (error as any).status === 400) {
+      try {
+        if (authUser?.id) {
+          console.log('Resetting auth password to match app_users and retrying')
+          const { error: updateErr } = await supabaseClient.auth.admin.updateUserById(authUser.id, {
+            password,
+            email_confirm: true,
+            user_metadata: { username: appUser.username, full_name: appUser.full_name }
+          })
+          if (updateErr) {
+            console.error('Error updating auth user password:', updateErr)
+          } else {
+            const retry = await supabaseClient.auth.signInWithPassword({ email: authEmail, password })
+            data = retry.data
+            error = retry.error as any
+            console.log('Retry sign in result:', { success: !!data, error })
+          }
+        }
+      } catch (e) {
+        console.error('Unexpected error when syncing password:', e)
+      }
+    }
+
     if (error) {
       return new Response(
-        JSON.stringify({ error: error.message }),
+        JSON.stringify({ error: (error as any).message || 'Invalid credentials' }),
         { 
           status: 401, 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
