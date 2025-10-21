@@ -106,6 +106,23 @@ const CandidateDetailsDialog = ({ candidate, onClose }: CandidateDetailsDialogPr
 
       if (error) throw error;
 
+      // Send to webhook
+      const webhookData = {
+        employer_email: user.email || user.username,
+        employer_name: user.full_name || user.username,
+        candidate_email: candidate.correo,
+        candidate_name: candidate.nombre,
+        availability: availability,
+      };
+
+      await fetch('https://primary-production-cdb3.up.railway.app/webhook-test/6669a30e-b24c-46ac-a0d3-20859ffe133c', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(webhookData),
+      });
+
       toast.success(t('interviewRequested'));
       setShowInterviewForm(false);
       setAvailability('');
