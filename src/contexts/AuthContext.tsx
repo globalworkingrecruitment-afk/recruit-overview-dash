@@ -91,10 +91,37 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const login = async (email: string, password: string): Promise<boolean> => {
+  const login = async (identifier: string, password: string): Promise<boolean> => {
     try {
+      let emailToUse = identifier;
+
+      // Si no parece un email, buscar el email por username
+      if (!identifier.includes('@')) {
+        const { data: profile, error: profileError } = await supabase
+          .from('profiles')
+          .select('id')
+          .eq('username', identifier)
+          .single();
+
+        if (profileError || !profile) {
+          toast.error('Invalid credentials');
+          return false;
+        }
+
+        // Obtener el email del usuario desde auth.users usando una función RPC
+        const { data: authUser, error: authError } = await supabase
+          .rpc('get_user_email_by_id', { user_id: profile.id });
+
+        if (authError || !authUser) {
+          toast.error('Invalid credentials');
+          return false;
+        }
+
+        emailToUse = authUser;
+      }
+
       const { data, error } = await supabase.auth.signInWithPassword({
-        email,
+        email: emailToUse,
         password,
       });
 
