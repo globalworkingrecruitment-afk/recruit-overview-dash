@@ -33,6 +33,7 @@ interface CandidateDetailsDialogProps {
     formacion_en: string | null;
     formacion_no: string | null;
     correo: string;
+    estado: string;
   };
   onClose: () => void;
 }
@@ -43,6 +44,23 @@ const CandidateDetailsDialog = ({ candidate, onClose }: CandidateDetailsDialogPr
   const [showInterviewForm, setShowInterviewForm] = useState(false);
   const [availability, setAvailability] = useState('');
 
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map((n) => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 3);
+  };
+
+  const getDisplayName = (name: string) => {
+    const parts = name.split(' ');
+    if (parts.length > 1) {
+      return `${parts[0]} ${parts[parts.length - 1][0]}.`;
+    }
+    return parts[0];
+  };
+
   const age = new Date().getFullYear() - candidate.anio_nacimiento;
   const nationality = language === 'en' ? candidate.nacionalidad_en : candidate.nacionalidad_no;
   const profession = language === 'en' ? candidate.profesion_en : candidate.profesion_no;
@@ -50,6 +68,8 @@ const CandidateDetailsDialog = ({ candidate, onClose }: CandidateDetailsDialogPr
   const medicalExp = language === 'en' ? candidate.experiencia_medica_en : candidate.experiencia_medica_no;
   const nonMedicalExp = language === 'en' ? candidate.experiencia_no_medica_en : candidate.experiencia_no_medica_no;
   const education = language === 'en' ? candidate.formacion_en : candidate.formacion_no;
+  
+  const isHired = /^hired - \d{4}$/i.test(candidate.estado);
 
   // Log view when dialog opens
   useEffect(() => {
@@ -99,9 +119,14 @@ const CandidateDetailsDialog = ({ candidate, onClose }: CandidateDetailsDialogPr
     <Dialog open onOpenChange={onClose}>
       <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-2xl">
-            {candidate.nombre} - {age} {t('yearsOld')}
-          </DialogTitle>
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-16 h-16 rounded-full bg-gradient-primary flex items-center justify-center text-white font-bold text-2xl shadow-lg">
+              {getInitials(candidate.nombre)}
+            </div>
+            <DialogTitle className="text-2xl">
+              {getDisplayName(candidate.nombre)} - {age} {t('yearsOld')}
+            </DialogTitle>
+          </div>
         </DialogHeader>
 
         <div className="space-y-6">
@@ -146,12 +171,15 @@ const CandidateDetailsDialog = ({ candidate, onClose }: CandidateDetailsDialogPr
             </div>
           )}
 
-          {!showInterviewForm ? (
-            <Button onClick={() => setShowInterviewForm(true)} className="w-full">
+          {!showInterviewForm && !isHired ? (
+            <Button 
+              onClick={() => setShowInterviewForm(true)} 
+              className="w-full bg-gradient-to-r from-primary to-orange-500 hover:from-primary/90 hover:to-orange-600 text-white"
+            >
               <Calendar className="h-4 w-4 mr-2" />
               {t('requestInterview')}
             </Button>
-          ) : (
+          ) : showInterviewForm && (
             <div className="space-y-4 p-4 border rounded-lg">
               <div className="space-y-2">
                 <Label htmlFor="availability">{t('availability')}</Label>
