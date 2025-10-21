@@ -176,9 +176,12 @@ const Portal = () => {
       {/* Fixed Header */}
       <div className="sticky top-0 z-50 bg-white shadow-md">
         <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            {/* Logo */}
-            <div className="flex-1 flex justify-center">
+          <div className="grid grid-cols-3 items-center">
+            {/* Left spacer */}
+            <div></div>
+
+            {/* Logo - centered */}
+            <div className="flex justify-center">
               <img
                 src={logoGlobalWorking}
                 alt="Global Working"
@@ -186,8 +189,8 @@ const Portal = () => {
               />
             </div>
 
-            {/* Language Switch & Logout */}
-            <div className="flex items-center gap-4">
+            {/* Language Switch & Logout - right */}
+            <div className="flex items-center justify-end gap-4">
               <div className="relative flex items-center bg-muted rounded-full p-1">
                 <span className={`absolute left-1 top-1/2 -translate-y-1/2 w-12 h-8 bg-primary rounded-full transition-transform duration-300 ${language === 'no' ? 'translate-x-12' : 'translate-x-0'}`} />
                 <button
