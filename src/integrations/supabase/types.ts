@@ -70,7 +70,7 @@ export type Database = {
       }
       candidate_data: {
         Row: {
-          anio_nacimiento: number | null
+          anio_nacimiento: number
           carta_en: string | null
           carta_no: string | null
           carta_resumen_en: string | null
@@ -95,7 +95,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
-          anio_nacimiento?: number | null
+          anio_nacimiento?: number
           carta_en?: string | null
           carta_no?: string | null
           carta_resumen_en?: string | null
@@ -120,7 +120,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
-          anio_nacimiento?: number | null
+          anio_nacimiento?: number
           carta_en?: string | null
           carta_no?: string | null
           carta_resumen_en?: string | null
