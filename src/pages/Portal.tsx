@@ -175,15 +175,15 @@ const Portal = () => {
   return (
     <div
       className="min-h-screen"
-      style={{ backgroundColor: 'hsl(var(--gw-blue-medium) / 0.12)' }}
+      style={{ backgroundColor: 'hsl(var(--gw-blue-medium) / 0.08)' }}
     >
       {/* Fixed Header */}
       <div className="sticky top-0 z-50 bg-white shadow-md">
         <div className="container mx-auto px-6 py-4">
-          <div className="grid grid-cols-[auto_1fr_auto] items-center gap-4">
+          <div className="flex items-center justify-between gap-4">
             <LanguageToggle />
 
-            <div className="flex justify-center">
+            <div className="absolute left-1/2 -translate-x-1/2">
               <img
                 src={logoGlobalWorking}
                 alt="Global Working"
@@ -191,16 +191,15 @@ const Portal = () => {
               />
             </div>
 
-            <div className="flex items-center justify-end gap-4">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleLogout}
-              >
-                <LogOut className="mr-2 h-4 w-4" />
-                {t('logout')}
-              </Button>
-            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleLogout}
+              className="ml-auto"
+            >
+              <LogOut className="mr-2 h-4 w-4" />
+              {t('logout')}
+            </Button>
           </div>
         </div>
       </div>
