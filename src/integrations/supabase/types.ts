@@ -75,7 +75,7 @@ export type Database = {
           carta_no: string | null
           carta_resumen_en: string | null
           carta_resumen_no: string | null
-          correo: string | null
+          correo: string
           created_at: string
           estado: string
           experiencia_medica_en: string | null
@@ -95,12 +95,12 @@ export type Database = {
           updated_at: string
         }
         Insert: {
-          anio_nacimiento?: number
+          anio_nacimiento: number
           carta_en?: string | null
           carta_no?: string | null
           carta_resumen_en?: string | null
           carta_resumen_no?: string | null
-          correo?: string | null
+          correo: string
           created_at?: string
           estado?: string
           experiencia_medica_en?: string | null
@@ -125,7 +125,7 @@ export type Database = {
           carta_no?: string | null
           carta_resumen_en?: string | null
           carta_resumen_no?: string | null
-          correo?: string | null
+          correo?: string
           created_at?: string
           estado?: string
           experiencia_medica_en?: string | null
