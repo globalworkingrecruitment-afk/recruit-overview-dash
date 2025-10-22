@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Calendar } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -140,9 +141,11 @@ const CandidateDetailsDialog = ({ candidate, onClose }: CandidateDetailsDialogPr
       <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-16 h-16 rounded-full bg-gradient-primary flex items-center justify-center text-white font-bold text-2xl shadow-lg">
-              {getInitials(candidate.nombre)}
-            </div>
+            <Avatar className="w-16 h-16 shadow-lg">
+              <AvatarFallback className="bg-gradient-primary text-white font-bold text-2xl">
+                {getInitials(candidate.nombre)}
+              </AvatarFallback>
+            </Avatar>
             <DialogTitle className="text-2xl">
               {getDisplayName(candidate.nombre)} - {age} {t('yearsOld')}
             </DialogTitle>

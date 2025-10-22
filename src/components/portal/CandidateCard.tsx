@@ -1,6 +1,7 @@
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Plus } from 'lucide-react';
 
 interface CandidateCardProps {
@@ -65,9 +66,11 @@ const CandidateCard = ({ candidate, onExpand }: CandidateCardProps) => {
     <Card className={`hover:shadow-lg transition-all duration-300 bg-gradient-card ${getBorderClass()}`}>
       <CardHeader className="flex flex-row items-start justify-between pb-2">
         <div className="flex items-center gap-3">
-          <div className="w-14 h-14 rounded-full bg-gradient-primary flex items-center justify-center text-white font-bold text-xl shadow-lg">
-            {getInitials(candidate.nombre)}
-          </div>
+          <Avatar className="w-14 h-14 shadow-lg">
+            <AvatarFallback className="bg-gradient-primary text-white font-bold text-xl">
+              {getInitials(candidate.nombre)}
+            </AvatarFallback>
+          </Avatar>
           <div>
             <p className="text-lg font-bold">{getDisplayName(candidate.nombre)}</p>
             <p className="text-sm text-muted-foreground">{age} {t('years')}</p>
