@@ -94,7 +94,10 @@ const CandidateDetailsDialog = ({ candidate, onClose }: CandidateDetailsDialogPr
     if (!availability.trim() || !user) return;
 
     try {
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      
       const { error } = await supabase.from('schedule_requests').insert({
+        user_id: authUser?.id,
         employer_username: user.username,
         employer_email: user.email || user.username,
         employer_name: user.full_name,

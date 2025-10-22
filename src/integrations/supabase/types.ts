@@ -146,6 +146,36 @@ export type Database = {
         }
         Relationships: []
       }
+      candidate_data_audit: {
+        Row: {
+          action: string
+          candidate_id: string
+          changed_at: string
+          changed_by: string
+          id: string
+          new_data: Json | null
+          old_data: Json | null
+        }
+        Insert: {
+          action: string
+          candidate_id: string
+          changed_at?: string
+          changed_by: string
+          id?: string
+          new_data?: Json | null
+          old_data?: Json | null
+        }
+        Update: {
+          action?: string
+          candidate_id?: string
+          changed_at?: string
+          changed_by?: string
+          id?: string
+          new_data?: Json | null
+          old_data?: Json | null
+        }
+        Relationships: []
+      }
       candidate_view_logs: {
         Row: {
           candidate_id: string
@@ -240,6 +270,7 @@ export type Database = {
           employer_username: string
           id: string
           requested_at: string
+          user_id: string | null
         }
         Insert: {
           availability: string
@@ -251,6 +282,7 @@ export type Database = {
           employer_username: string
           id?: string
           requested_at?: string
+          user_id?: string | null
         }
         Update: {
           availability?: string
@@ -262,6 +294,7 @@ export type Database = {
           employer_username?: string
           id?: string
           requested_at?: string
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -372,6 +405,7 @@ export type Database = {
           employer_username: string
           id: string
           requested_at: string
+          user_id: string | null
         }[]
       }
       admin_toggle_app_user_status: {
@@ -399,6 +433,10 @@ export type Database = {
           updated_at: string
           username: string
         }
+      }
+      get_current_user_id: {
+        Args: Record<PropertyKey, never>
+        Returns: string
       }
       get_current_username: {
         Args: Record<PropertyKey, never>
