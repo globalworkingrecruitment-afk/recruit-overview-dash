@@ -6,13 +6,14 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import LanguageToggle from '@/components/LanguageToggle';
 import logoGW from '@/assets/logo-globalworking.png';
 
 const Login = () => {
   const { login, user, isAdmin, loading } = useAuth();
-  const { language, setLanguage, t } = useLanguage();
+  const { t } = useLanguage();
   const navigate = useNavigate();
-  
+
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -38,36 +39,23 @@ const Login = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-secondary to-background p-4">
-      {/* Language Switch - Top Right */}
-      <div className="absolute top-4 right-4">
-        <div className="relative flex items-center bg-gradient-to-r from-primary to-orange-500 rounded-full p-1 shadow-lg">
-          <span className={`absolute left-1 top-1/2 -translate-y-1/2 w-12 h-8 bg-white rounded-full transition-transform duration-300 ${language === 'no' ? 'translate-x-12' : 'translate-x-0'}`} />
-          <button
-            onClick={() => setLanguage('en')}
-            className={`relative z-10 px-4 py-2 text-sm font-semibold transition-colors duration-300 ${language === 'en' ? 'text-primary' : 'text-white'}`}
-          >
-            EN
-          </button>
-          <button
-            onClick={() => setLanguage('no')}
-            className={`relative z-10 px-4 py-2 text-sm font-semibold transition-colors duration-300 ${language === 'no' ? 'text-primary' : 'text-white'}`}
-          >
-            NO
-          </button>
-        </div>
-      </div>
+    <div
+      className="relative flex min-h-screen items-center justify-center p-4"
+      style={{ backgroundColor: 'hsl(var(--gw-blue-medium) / 0.2)' }}
+    >
+      {/* Language Switch - Top Left */}
+      <LanguageToggle className="absolute left-4 top-4" />
 
-      <Card className="w-full max-w-md shadow-lg border-2 border-primary/10">
-        <CardHeader className="space-y-4 text-center bg-gradient-to-br from-primary/5 to-orange-500/5">
+      <Card className="w-full max-w-md border border-primary/10 bg-white/95 shadow-lg">
+        <CardHeader className="space-y-4 text-center border-b border-primary/10 bg-white">
           <div className="flex justify-center">
-            <img 
-              src={logoGW} 
-              alt="GlobalWorking" 
+            <img
+              src={logoGW}
+              alt="GlobalWorking"
               className="h-20 object-contain"
             />
           </div>
-          <CardTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-orange-500 bg-clip-text text-transparent">
+          <CardTitle className="text-2xl font-bold text-primary">
             {t('candidatePortal')}
           </CardTitle>
         </CardHeader>
@@ -81,10 +69,10 @@ const Login = () => {
                 value={identifier}
                 onChange={(e) => setIdentifier(e.target.value)}
                 required
-                className="border-2 focus:border-orange-500"
+                className="border-primary/30 focus-visible:border-primary focus-visible:ring-primary focus-visible:ring-offset-2"
               />
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="password">{t('password')}</Label>
               <Input
@@ -93,13 +81,13 @@ const Login = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="border-2 focus:border-orange-500"
+                className="border-primary/30 focus-visible:border-primary focus-visible:ring-primary focus-visible:ring-offset-2"
               />
             </div>
 
-            <Button 
-              type="submit" 
-              className="w-full bg-gradient-to-r from-primary to-orange-500 hover:from-primary/90 hover:to-orange-500/90" 
+            <Button
+              type="submit"
+              className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
               disabled={submitting}
             >
               {submitting ? '...' : t('login')}
