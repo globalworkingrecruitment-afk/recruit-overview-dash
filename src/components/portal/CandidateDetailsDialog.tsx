@@ -194,7 +194,7 @@ const CandidateDetailsDialog = ({ candidate, onClose }: CandidateDetailsDialogPr
           {!showInterviewForm && !isHired ? (
             <Button 
               onClick={() => setShowInterviewForm(true)} 
-              className="w-full bg-gradient-to-r from-primary to-orange-500 hover:from-primary/90 hover:to-orange-600 text-white"
+              className="w-full bg-success text-success-foreground hover:bg-success/90"
             >
               <Calendar className="h-4 w-4 mr-2" />
               {t('requestInterview')}
