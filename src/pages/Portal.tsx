@@ -9,6 +9,7 @@ import { LogOut, Search } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import CandidateCard from '@/components/portal/CandidateCard';
 import CandidateDetailsDialog from '@/components/portal/CandidateDetailsDialog';
+import LanguageToggle from '@/components/LanguageToggle';
 import logoGlobalWorking from '@/assets/logo-globalworking.png';
 
 interface Candidate {
@@ -35,9 +36,9 @@ interface Candidate {
 
 const Portal = () => {
   const { user, logout } = useAuth();
-  const { language, setLanguage, t } = useLanguage();
+  const { language, t } = useLanguage();
   const navigate = useNavigate();
-  
+
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [filteredCandidates, setFilteredCandidates] = useState<Candidate[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -76,14 +77,14 @@ const Portal = () => {
   const extractHiredYears = () => {
     const hiredPattern = /^hired - (\d{4})$/i;
     const years = new Set<string>();
-    
+
     candidates.forEach((c) => {
       const match = c.estado.match(hiredPattern);
       if (match) {
         years.add(match[1]);
       }
     });
-    
+
     setHiredYears(Array.from(years).sort().reverse());
   };
 
@@ -99,12 +100,12 @@ const Portal = () => {
       filtered = candidates.filter((c) => {
         const match = c.estado.match(hiredPattern);
         if (!match) return false;
-        
+
         // Si hay filtro de año específico, aplicarlo
         if (hiredYearFilter !== 'all' && match[1] !== hiredYearFilter) {
           return false;
         }
-        
+
         return true;
       });
     } else {
@@ -172,15 +173,16 @@ const Portal = () => {
   };
 
   return (
-    <div className="min-h-screen bg-secondary/20">
+    <div
+      className="min-h-screen"
+      style={{ backgroundColor: 'hsl(var(--gw-blue-medium) / 0.12)' }}
+    >
       {/* Fixed Header */}
       <div className="sticky top-0 z-50 bg-white shadow-md">
         <div className="container mx-auto px-6 py-4">
-          <div className="grid grid-cols-3 items-center">
-            {/* Left spacer */}
-            <div></div>
+          <div className="grid grid-cols-[auto_1fr_auto] items-center gap-4">
+            <LanguageToggle />
 
-            {/* Logo - centered */}
             <div className="flex justify-center">
               <img
                 src={logoGlobalWorking}
@@ -189,30 +191,13 @@ const Portal = () => {
               />
             </div>
 
-            {/* Language Switch & Logout - right */}
             <div className="flex items-center justify-end gap-4">
-              <div className="relative flex items-center bg-muted rounded-full p-1">
-                <span className={`absolute left-1 top-1/2 -translate-y-1/2 w-12 h-8 bg-accent rounded-full transition-transform duration-300 ${language === 'no' ? 'translate-x-12' : 'translate-x-0'}`} />
-                <button
-                  onClick={() => setLanguage('en')}
-                  className={`relative z-10 px-4 py-2 text-sm font-semibold transition-colors duration-300 ${language === 'en' ? 'text-white' : 'text-foreground'}`}
-                >
-                  EN
-                </button>
-                <button
-                  onClick={() => setLanguage('no')}
-                  className={`relative z-10 px-4 py-2 text-sm font-semibold transition-colors duration-300 ${language === 'no' ? 'text-white' : 'text-foreground'}`}
-                >
-                  NO
-                </button>
-              </div>
-
               <Button
                 variant="outline"
                 size="sm"
                 onClick={handleLogout}
               >
-                <LogOut className="h-4 w-4 mr-2" />
+                <LogOut className="mr-2 h-4 w-4" />
                 {t('logout')}
               </Button>
             </div>
@@ -220,10 +205,10 @@ const Portal = () => {
         </div>
       </div>
 
-      <div className="container mx-auto p-6 space-y-8">
+      <div className="container mx-auto space-y-8 p-6">
         {/* Title */}
         <div className="flex flex-col items-center justify-center gap-4 pt-4">
-          <h1 className="text-4xl md:text-5xl font-bold text-primary text-center">
+          <h1 className="text-center text-4xl font-bold text-primary md:text-5xl">
             {t('candidatePortal')}
           </h1>
         </div>
@@ -231,7 +216,7 @@ const Portal = () => {
         {/* Search */}
         <div className="flex gap-2">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder={t('searchPlaceholder')}
               value={searchQuery}
@@ -240,77 +225,92 @@ const Portal = () => {
               className="pl-10"
             />
           </div>
-          <Button onClick={handleSearch} className="bg-accent hover:bg-accent/90 text-accent-foreground">
+          <Button onClick={handleSearch} className="bg-primary text-primary-foreground hover:bg-primary/90">
             {t('search')}
           </Button>
         </div>
 
         {/* Statistics Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-card rounded-lg p-6 shadow-md border border-border">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <div className="rounded-lg border border-border bg-card p-6 shadow-md">
             <div className="flex flex-col items-center text-center">
-              <p className="text-sm text-muted-foreground mb-2">
+              <p className="mb-2 text-sm text-muted-foreground">
                 {t('totalCandidates')}
               </p>
-              <p className="text-4xl font-bold text-accent">+1000</p>
+              <p className="text-4xl font-bold text-primary">+1000</p>
             </div>
           </div>
 
-          <div className="bg-card rounded-lg p-6 shadow-md border border-border">
+          <div className="rounded-lg border border-border bg-card p-6 shadow-md">
             <div className="flex flex-col items-center text-center">
-              <p className="text-sm text-muted-foreground mb-2">
+              <p className="mb-2 text-sm text-muted-foreground">
                 {t('nonScandinavianShare')}
               </p>
-              <p className="text-4xl font-bold text-accent">1/3</p>
-              <p className="text-xs text-muted-foreground mt-1">
+              <p className="text-4xl font-bold text-primary">1/3</p>
+              <p className="mt-1 text-xs text-muted-foreground">
                 {t('nonScandinavianText')}
               </p>
             </div>
           </div>
 
-          <div className="bg-card rounded-lg p-6 shadow-md border border-border">
+          <div className="rounded-lg border border-border bg-card p-6 shadow-md">
             <div className="flex flex-col items-center text-center">
-              <p className="text-sm text-muted-foreground mb-2">
+              <p className="mb-2 text-sm text-muted-foreground">
                 {t('activePlacements')}
               </p>
-              <p className="text-4xl font-bold text-accent">
-                {candidates.filter(c => c.estado.match(/^hired - \d{4}$/i)).length}
+              <p className="text-4xl font-bold text-primary">
+                {candidates.filter((c) => c.estado.match(/^hired - \d{4}$/i)).length}
               </p>
             </div>
           </div>
 
-          <div className="bg-card rounded-lg p-6 shadow-md border border-border">
+          <div className="rounded-lg border border-border bg-card p-6 shadow-md">
             <div className="flex flex-col items-center text-center">
-              <p className="text-sm text-muted-foreground mb-2">
+              <p className="mb-2 text-sm text-muted-foreground">
                 {t('candidatesOnPage')}
               </p>
-              <p className="text-4xl font-bold text-accent">{filteredCandidates.length}</p>
+              <p className="text-4xl font-bold text-primary">{filteredCandidates.length}</p>
             </div>
           </div>
         </div>
 
         {/* Status Filter */}
-        <Tabs value={statusFilter} onValueChange={(val) => {
-          setStatusFilter(val);
-          if (val === 'Hired') setHiredYearFilter('all');
-        }}>
+        <Tabs
+          value={statusFilter}
+          onValueChange={(val) => {
+            setStatusFilter(val);
+            if (val === 'Hired') setHiredYearFilter('all');
+          }}
+        >
           <TabsList className="bg-muted">
-            <TabsTrigger value="all" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">
+            <TabsTrigger
+              value="all"
+              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+            >
               {language === 'en' ? 'All' : 'Alle'}
             </TabsTrigger>
-            <TabsTrigger value="Available" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">
+            <TabsTrigger
+              value="Available"
+              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+            >
               {t(getStatusKey('Available'))}
             </TabsTrigger>
-            <TabsTrigger value="In Training" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">
+            <TabsTrigger
+              value="In Training"
+              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+            >
               {t(getStatusKey('In Training'))}
             </TabsTrigger>
-            <TabsTrigger value="Hired" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">
+            <TabsTrigger
+              value="Hired"
+              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+            >
               {t(getStatusKey('Hired'))}
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="all" className="mt-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
               {filteredCandidates.map((candidate) => (
                 <CandidateCard
                   key={candidate.id}
@@ -320,14 +320,14 @@ const Portal = () => {
               ))}
             </div>
             {filteredCandidates.length === 0 && (
-              <p className="text-center text-muted-foreground py-12">
+              <p className="py-12 text-center text-muted-foreground">
                 {language === 'en' ? 'No candidates found' : 'Ingen kandidater funnet'}
               </p>
             )}
           </TabsContent>
 
           <TabsContent value="Available" className="mt-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
               {filteredCandidates.map((candidate) => (
                 <CandidateCard
                   key={candidate.id}
@@ -337,14 +337,14 @@ const Portal = () => {
               ))}
             </div>
             {filteredCandidates.length === 0 && (
-              <p className="text-center text-muted-foreground py-12">
+              <p className="py-12 text-center text-muted-foreground">
                 {language === 'en' ? 'No candidates found' : 'Ingen kandidater funnet'}
               </p>
             )}
           </TabsContent>
 
           <TabsContent value="In Training" className="mt-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
               {filteredCandidates.map((candidate) => (
                 <CandidateCard
                   key={candidate.id}
@@ -354,7 +354,7 @@ const Portal = () => {
               ))}
             </div>
             {filteredCandidates.length === 0 && (
-              <p className="text-center text-muted-foreground py-12">
+              <p className="py-12 text-center text-muted-foreground">
                 {language === 'en' ? 'No candidates found' : 'Ingen kandidater funnet'}
               </p>
             )}
@@ -374,7 +374,7 @@ const Portal = () => {
                 </TabsList>
 
                 <TabsContent value={hiredYearFilter} className="mt-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                     {filteredCandidates.map((candidate) => (
                       <CandidateCard
                         key={candidate.id}
@@ -384,16 +384,16 @@ const Portal = () => {
                     ))}
                   </div>
                   {filteredCandidates.length === 0 && (
-                    <p className="text-center text-muted-foreground py-12">
+                    <p className="py-12 text-center text-muted-foreground">
                       No candidates found
                     </p>
                   )}
                 </TabsContent>
               </Tabs>
             )}
-            
+
             {hiredYears.length === 0 && (
-              <p className="text-center text-muted-foreground py-12">
+              <p className="py-12 text-center text-muted-foreground">
                 No hired candidates found
               </p>
             )}
