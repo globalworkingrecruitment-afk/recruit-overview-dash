@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { LogOut, Search } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import CandidateCard from '@/components/portal/CandidateCard';
 import CandidateDetailsDialog from '@/components/portal/CandidateDetailsDialog';
 import LanguageToggle from '@/components/LanguageToggle';
@@ -258,7 +259,7 @@ const Portal = () => {
                 {t('activePlacements')}
               </p>
               <p className="text-4xl font-bold text-primary">
-                {candidates.filter((c) => c.estado.match(/^hired - \d{4}$/i)).length}
+                {candidates.filter((c) => c.estado === 'Available' || c.estado === 'In Training').length}
               </p>
             </div>
           </div>
@@ -362,33 +363,43 @@ const Portal = () => {
           <TabsContent value="Hired" className="mt-6 space-y-6">
             {/* Year Filter for Hired */}
             {hiredYears.length > 0 && (
-              <Tabs value={hiredYearFilter} onValueChange={setHiredYearFilter}>
-                <TabsList>
-                  <TabsTrigger value="all">All</TabsTrigger>
-                  {hiredYears.map((year) => (
-                    <TabsTrigger key={year} value={year}>
-                      {year}
-                    </TabsTrigger>
-                  ))}
-                </TabsList>
+              <div className="space-y-6">
+                <div className="flex items-center gap-4 rounded-lg bg-card p-4 shadow-sm border border-border">
+                  <label className="text-sm font-medium text-foreground whitespace-nowrap">
+                    {language === 'en' ? 'Filter by year:' : 'Filtrer etter år:'}
+                  </label>
+                  <Select value={hiredYearFilter} onValueChange={setHiredYearFilter}>
+                    <SelectTrigger className="w-[200px] bg-background">
+                      <SelectValue placeholder={language === 'en' ? 'Select year' : 'Velg år'} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">
+                        {language === 'en' ? 'All years' : 'Alle år'}
+                      </SelectItem>
+                      {hiredYears.map((year) => (
+                        <SelectItem key={year} value={year}>
+                          {year}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
 
-                <TabsContent value={hiredYearFilter} className="mt-6">
-                  <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-                    {filteredCandidates.map((candidate) => (
-                      <CandidateCard
-                        key={candidate.id}
-                        candidate={candidate}
-                        onExpand={() => setSelectedCandidate(candidate)}
-                      />
-                    ))}
-                  </div>
-                  {filteredCandidates.length === 0 && (
-                    <p className="py-12 text-center text-muted-foreground">
-                      No candidates found
-                    </p>
-                  )}
-                </TabsContent>
-              </Tabs>
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                  {filteredCandidates.map((candidate) => (
+                    <CandidateCard
+                      key={candidate.id}
+                      candidate={candidate}
+                      onExpand={() => setSelectedCandidate(candidate)}
+                    />
+                  ))}
+                </div>
+                {filteredCandidates.length === 0 && (
+                  <p className="py-12 text-center text-muted-foreground">
+                    {language === 'en' ? 'No candidates found' : 'Ingen kandidater funnet'}
+                  </p>
+                )}
+              </div>
             )}
 
             {hiredYears.length === 0 && (
