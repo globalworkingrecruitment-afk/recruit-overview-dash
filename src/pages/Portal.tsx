@@ -256,7 +256,7 @@ const Portal = () => {
           <div className="rounded-lg border border-border bg-card p-6 shadow-md">
             <div className="flex flex-col items-center text-center">
               <p className="mb-2 text-sm text-muted-foreground">
-                {t('activePlacements')}
+                {t('activeCandidates')}
               </p>
               <p className="text-4xl font-bold text-primary">
                 {candidates.filter((c) => c.estado === 'Available' || c.estado === 'In Training').length}

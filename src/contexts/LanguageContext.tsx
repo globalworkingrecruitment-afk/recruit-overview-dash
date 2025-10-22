@@ -46,7 +46,7 @@ const translations = {
     totalCandidates: 'Total Global Working Candidates',
     nonScandinavianShare: 'Non-Scandinavian Market Share',
     nonScandinavianText: 'of non-Scandinavian candidates',
-    activePlacements: 'Active Placements',
+    activeCandidates: 'Active Candidates',
     candidatesOnPage: 'Candidates on This Page',
     
     // Candidate
@@ -109,7 +109,7 @@ const translations = {
     totalCandidates: 'Total Global Working-kandidater',
     nonScandinavianShare: 'Ikke-skandinavisk markedsandel',
     nonScandinavianText: 'av ikke-skandinaviske kandidater',
-    activePlacements: 'Aktive plasseringer',
+    activeCandidates: 'Aktive kandidater',
     candidatesOnPage: 'Kandidater på denne siden',
     
     // Candidate

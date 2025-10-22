@@ -67,7 +67,7 @@ const CandidateCard = ({ candidate, onExpand }: CandidateCardProps) => {
       <CardHeader className="flex flex-row items-start justify-between pb-2">
         <div className="flex items-center gap-3">
           <Avatar className="w-14 h-14 shadow-lg">
-            <AvatarFallback className="bg-gradient-primary text-white font-bold text-xl">
+            <AvatarFallback className="bg-primary text-primary-foreground font-bold text-xl">
               {getInitials(candidate.nombre)}
             </AvatarFallback>
           </Avatar>

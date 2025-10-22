@@ -142,7 +142,7 @@ const CandidateDetailsDialog = ({ candidate, onClose }: CandidateDetailsDialogPr
         <DialogHeader>
           <div className="flex items-center gap-3 mb-4">
             <Avatar className="w-16 h-16 shadow-lg">
-              <AvatarFallback className="bg-gradient-primary text-white font-bold text-2xl">
+              <AvatarFallback className="bg-primary text-primary-foreground font-bold text-2xl">
                 {getInitials(candidate.nombre)}
               </AvatarFallback>
             </Avatar>
